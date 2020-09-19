@@ -20,12 +20,12 @@ public class Transfer {
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "TRANSFER_ACCOUNT_FROM")
-	private UserAccount accountFrom;
+	private Account accountFrom;
 
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "TRANSFER_ACCOUNT_TO")
-	private UserAccount accountTo;
+	private Account accountTo;
 
 	@Id
 	@OneToOne
@@ -33,8 +33,6 @@ public class Transfer {
 	@JoinColumn(name = "TRANSFER_TRANSACTION_ID",referencedColumnName = "TRANSACTION_ID")
 	private Transaction transactionId;
 
-	@Column(name = "TRANSFER_AMOUNT")
-	private double transferAmount;
 
 	@Column(name = "TRANSFER_DESCRIPTION")
 	private String transferDescription;
@@ -44,99 +42,7 @@ public class Transfer {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Transfer(UserAccount accountFrom, UserAccount accountTo, Transaction transactionId, double transferAmount,
-			String transferDescription) {
-		super();
-		this.accountFrom = accountFrom;
-		this.accountTo = accountTo;
-		this.transactionId = transactionId;
-		this.transferAmount = transferAmount;
-		this.transferDescription = transferDescription;
-	}
-
-	public UserAccount getAccountFrom() {
-		return accountFrom;
-	}
-
-	public void setAccountFrom(UserAccount accountFrom) {
-		this.accountFrom = accountFrom;
-	}
-
-	public UserAccount getAccountTo() {
-		return accountTo;
-	}
-
-	public void setAccountTo(UserAccount accountTo) {
-		this.accountTo = accountTo;
-	}
-
-	public Transaction getTransactionId() {
-		return transactionId;
-	}
-
-	public void setTransactionId(Transaction transactionId) {
-		this.transactionId = transactionId;
-	}
-
-	public double getTransferAmount() {
-		return transferAmount;
-	}
-
-	public void setTransferAmount(double transferAmount) {
-		this.transferAmount = transferAmount;
-	}
-
-	public String getTransferDescription() {
-		return transferDescription;
-	}
-
-	public void setTransferDescription(String transferDescription) {
-		this.transferDescription = transferDescription;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((accountFrom == null) ? 0 : accountFrom.hashCode());
-		result = prime * result + ((accountTo == null) ? 0 : accountTo.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(transferAmount);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((transferDescription == null) ? 0 : transferDescription.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Transfer other = (Transfer) obj;
-		if (accountFrom == null) {
-			if (other.accountFrom != null)
-				return false;
-		} else if (!accountFrom.equals(other.accountFrom))
-			return false;
-		if (accountTo == null) {
-			if (other.accountTo != null)
-				return false;
-		} else if (!accountTo.equals(other.accountTo))
-			return false;
-		if (Double.doubleToLongBits(transferAmount) != Double.doubleToLongBits(other.transferAmount))
-			return false;
-		if (transferDescription == null) {
-			if (other.transferDescription != null)
-				return false;
-		} else if (!transferDescription.equals(other.transferDescription))
-			return false;
-		return true;
-	}
-
-	public class TransferPK implements Serializable {
+		public class TransferPK implements Serializable {
 
 		/**
 		 * 

@@ -2,7 +2,6 @@ package com.paymybuddy.entity;
 
 import java.time.Instant;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,10 +20,13 @@ public class Transaction {
 	@Column(name = "TRANSACTION_ID")
 	private long transactionId;
 	
-	@Column(name="TRANSACTION_DATE")
+	@Column(name="TRANSACTION_DATE", columnDefinition="timestamp")
 	private Instant transactionDate;
 	
-	@Column(name="TRANSACTION_FEE")
+	@Column(name="TRANSACTION_AMOUNT",nullable=true)
+	private double transactionAmount;
+	
+	@Column(name="TRANSACTION_FEE",nullable=true)
 	private double transactionFee;
 	
 	@OneToOne
