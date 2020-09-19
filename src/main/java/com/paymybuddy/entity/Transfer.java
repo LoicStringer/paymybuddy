@@ -30,9 +30,8 @@ public class Transfer {
 	@Id
 	@OneToOne
 	@MapsId
-	@JoinColumn(name = "TRANSFER_TRANSACTION_ID",referencedColumnName = "TRANSACTION_ID")
+	@JoinColumn(name = "TRANSFER_TRANSACTION_ID", referencedColumnName = "TRANSACTION_ID")
 	private Transaction transactionId;
-
 
 	@Column(name = "TRANSFER_DESCRIPTION")
 	private String transferDescription;
@@ -42,7 +41,90 @@ public class Transfer {
 		// TODO Auto-generated constructor stub
 	}
 
-		public class TransferPK implements Serializable {
+	public Transfer(Account accountFrom, Account accountTo, Transaction transactionId, String transferDescription) {
+		super();
+		this.accountFrom = accountFrom;
+		this.accountTo = accountTo;
+		this.transactionId = transactionId;
+		this.transferDescription = transferDescription;
+	}
+
+	public Account getAccountFrom() {
+		return accountFrom;
+	}
+
+	public void setAccountFrom(Account accountFrom) {
+		this.accountFrom = accountFrom;
+	}
+
+	public Account getAccountTo() {
+		return accountTo;
+	}
+
+	public void setAccountTo(Account accountTo) {
+		this.accountTo = accountTo;
+	}
+
+	public Transaction getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(Transaction transactionId) {
+		this.transactionId = transactionId;
+	}
+
+	public String getTransferDescription() {
+		return transferDescription;
+	}
+
+	public void setTransferDescription(String transferDescription) {
+		this.transferDescription = transferDescription;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((accountFrom == null) ? 0 : accountFrom.hashCode());
+		result = prime * result + ((accountTo == null) ? 0 : accountTo.hashCode());
+		result = prime * result + ((transactionId == null) ? 0 : transactionId.hashCode());
+		result = prime * result + ((transferDescription == null) ? 0 : transferDescription.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Transfer other = (Transfer) obj;
+		if (accountFrom == null) {
+			if (other.accountFrom != null)
+				return false;
+		} else if (!accountFrom.equals(other.accountFrom))
+			return false;
+		if (accountTo == null) {
+			if (other.accountTo != null)
+				return false;
+		} else if (!accountTo.equals(other.accountTo))
+			return false;
+		if (transactionId == null) {
+			if (other.transactionId != null)
+				return false;
+		} else if (!transactionId.equals(other.transactionId))
+			return false;
+		if (transferDescription == null) {
+			if (other.transferDescription != null)
+				return false;
+		} else if (!transferDescription.equals(other.transferDescription))
+			return false;
+		return true;
+	}
+
+	public class TransferPK implements Serializable {
 
 		/**
 		 * 
