@@ -6,4 +6,5 @@ import com.paymybuddy.entity.Account;
 
 public interface AccountDAO extends CrudRepository<Account, Long>{
 
+	
 }

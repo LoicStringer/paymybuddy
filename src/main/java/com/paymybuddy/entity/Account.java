@@ -7,29 +7,30 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "USER_ACCOUNT")
+@Table(name = "ACCOUNT")
 public class Account {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "ACCOUNT_ID")
 	private long accountId;
 
-	@Column(name = "ACCOUNT_USER_NAME", length = 20, nullable = false)
+	@Column(name = "ACCOUNT_NAME", length = 20, nullable = false)
 	private String accountUserName;
 
-	@Column(name = "ACCOUNT_USER_EMAIL", length = 50, nullable = false, unique = true)
+	@Column(name = "ACCOUNT_EMAIL", length = 50, nullable = false, unique = true)
 	private String accountUserEmail;
 
-	@Column(name = "ACCOUNT_USER_PASSWORD", length = 20, nullable = false)
+	@Column(name = "ACCOUNT_PASSWORD", length = 20, nullable = false)
 	private String accountUserPassword;
 
-	@Column(name = "ACCOUNT_BALANCE", columnDefinition = "double default 0")
-	private double balance;
+	@Column(name = "ACCOUNT_BALANCE", nullable = true)
+	private double accountBalance;
 
 	@OneToMany(mappedBy = "accountFrom")
 	private List<Transfer> transfersFrom;
@@ -37,21 +38,36 @@ public class Account {
 	@OneToMany(mappedBy = "accountTo")
 	private List<Transfer> transfersTo;
 
+	@OneToMany(mappedBy = "friendAccount")
+	private List<Account> friendsList;
+
+	@ManyToOne
+	private Account friendAccount;
+
+	@OneToMany(mappedBy = "holderAccountId")
+	private List<Providing> providingsToBankAccount;
+
+	@OneToMany
+	private List<BankAccount> ownedBankAccounts;
+
 	public Account() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Account(long accountId, String accountUserName, String accountUserEmail, String accountUserPassword,
-			double balance, List<Transfer> transfersFrom, List<Transfer> transfersTo) {
+			double accountBalance, List<Transfer> transfersFrom, List<Transfer> transfersTo, List<Account> friendsList,
+			Account friendAccount, List<Providing> providingsToBankAccount, List<BankAccount> ownedBankAccounts) {
 		super();
 		this.accountId = accountId;
 		this.accountUserName = accountUserName;
 		this.accountUserEmail = accountUserEmail;
 		this.accountUserPassword = accountUserPassword;
-		this.balance = balance;
+		this.accountBalance = accountBalance;
 		this.transfersFrom = transfersFrom;
 		this.transfersTo = transfersTo;
+		this.friendsList = friendsList;
+		this.friendAccount = friendAccount;
+		this.providingsToBankAccount = providingsToBankAccount;
+		this.ownedBankAccounts = ownedBankAccounts;
 	}
 
 	public long getAccountId() {
@@ -86,12 +102,12 @@ public class Account {
 		this.accountUserPassword = accountUserPassword;
 	}
 
-	public double getBalance() {
-		return balance;
+	public double getAccountBalance() {
+		return accountBalance;
 	}
 
-	public void setBalance(double balance) {
-		this.balance = balance;
+	public void setAccountBalance(double accountBalance) {
+		this.accountBalance = accountBalance;
 	}
 
 	public List<Transfer> getTransfersFrom() {
@@ -110,17 +126,53 @@ public class Account {
 		this.transfersTo = transfersTo;
 	}
 
+	public List<Account> getFriendsList() {
+		return friendsList;
+	}
+
+	public void setFriendsList(List<Account> friendsList) {
+		this.friendsList = friendsList;
+	}
+
+	public Account getFriendAccount() {
+		return friendAccount;
+	}
+
+	public void setFriendAccount(Account friendAccount) {
+		this.friendAccount = friendAccount;
+	}
+
+	public List<Providing> getProvidingsToBankAccount() {
+		return providingsToBankAccount;
+	}
+
+	public void setProvidingsToBankAccount(List<Providing> providingsToBankAccount) {
+		this.providingsToBankAccount = providingsToBankAccount;
+	}
+
+	public List<BankAccount> getOwnedBankAccounts() {
+		return ownedBankAccounts;
+	}
+
+	public void setOwnedBankAccounts(List<BankAccount> ownedBankAccounts) {
+		this.ownedBankAccounts = ownedBankAccounts;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(accountBalance);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		result = prime * result + (int) (accountId ^ (accountId >>> 32));
 		result = prime * result + ((accountUserEmail == null) ? 0 : accountUserEmail.hashCode());
 		result = prime * result + ((accountUserName == null) ? 0 : accountUserName.hashCode());
 		result = prime * result + ((accountUserPassword == null) ? 0 : accountUserPassword.hashCode());
-		long temp;
-		temp = Double.doubleToLongBits(balance);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + ((friendAccount == null) ? 0 : friendAccount.hashCode());
+		result = prime * result + ((friendsList == null) ? 0 : friendsList.hashCode());
+		result = prime * result + ((ownedBankAccounts == null) ? 0 : ownedBankAccounts.hashCode());
+		result = prime * result + ((providingsToBankAccount == null) ? 0 : providingsToBankAccount.hashCode());
 		result = prime * result + ((transfersFrom == null) ? 0 : transfersFrom.hashCode());
 		result = prime * result + ((transfersTo == null) ? 0 : transfersTo.hashCode());
 		return result;
@@ -135,6 +187,8 @@ public class Account {
 		if (getClass() != obj.getClass())
 			return false;
 		Account other = (Account) obj;
+		if (Double.doubleToLongBits(accountBalance) != Double.doubleToLongBits(other.accountBalance))
+			return false;
 		if (accountId != other.accountId)
 			return false;
 		if (accountUserEmail == null) {
@@ -152,7 +206,25 @@ public class Account {
 				return false;
 		} else if (!accountUserPassword.equals(other.accountUserPassword))
 			return false;
-		if (Double.doubleToLongBits(balance) != Double.doubleToLongBits(other.balance))
+		if (friendAccount == null) {
+			if (other.friendAccount != null)
+				return false;
+		} else if (!friendAccount.equals(other.friendAccount))
+			return false;
+		if (friendsList == null) {
+			if (other.friendsList != null)
+				return false;
+		} else if (!friendsList.equals(other.friendsList))
+			return false;
+		if (ownedBankAccounts == null) {
+			if (other.ownedBankAccounts != null)
+				return false;
+		} else if (!ownedBankAccounts.equals(other.ownedBankAccounts))
+			return false;
+		if (providingsToBankAccount == null) {
+			if (other.providingsToBankAccount != null)
+				return false;
+		} else if (!providingsToBankAccount.equals(other.providingsToBankAccount))
 			return false;
 		if (transfersFrom == null) {
 			if (other.transfersFrom != null)

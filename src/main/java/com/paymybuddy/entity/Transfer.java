@@ -30,22 +30,20 @@ public class Transfer {
 	@Id
 	@OneToOne
 	@MapsId
-	@JoinColumn(name = "TRANSFER_TRANSACTION_ID", referencedColumnName = "TRANSACTION_ID")
-	private Transaction transactionId;
+	@JoinColumn(name = "TRANSFER_OPERATION_ID", referencedColumnName = "OPERATION_ID")
+	private Operation transferOperationId;
 
-	@Column(name = "TRANSFER_DESCRIPTION")
+	@Column(name = "TRANSFER_DESCRIPTION", length = 20, nullable = true)
 	private String transferDescription;
 
 	public Transfer() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public Transfer(Account accountFrom, Account accountTo, Transaction transactionId, String transferDescription) {
+	public Transfer(Account accountFrom, Account accountTo, Operation transferOperationId, String transferDescription) {
 		super();
 		this.accountFrom = accountFrom;
 		this.accountTo = accountTo;
-		this.transactionId = transactionId;
+		this.transferOperationId = transferOperationId;
 		this.transferDescription = transferDescription;
 	}
 
@@ -65,12 +63,12 @@ public class Transfer {
 		this.accountTo = accountTo;
 	}
 
-	public Transaction getTransactionId() {
-		return transactionId;
+	public Operation getTransferOperationId() {
+		return transferOperationId;
 	}
 
-	public void setTransactionId(Transaction transactionId) {
-		this.transactionId = transactionId;
+	public void setTransferOperationId(Operation transferOperationId) {
+		this.transferOperationId = transferOperationId;
 	}
 
 	public String getTransferDescription() {
@@ -87,8 +85,8 @@ public class Transfer {
 		int result = 1;
 		result = prime * result + ((accountFrom == null) ? 0 : accountFrom.hashCode());
 		result = prime * result + ((accountTo == null) ? 0 : accountTo.hashCode());
-		result = prime * result + ((transactionId == null) ? 0 : transactionId.hashCode());
 		result = prime * result + ((transferDescription == null) ? 0 : transferDescription.hashCode());
+		result = prime * result + ((transferOperationId == null) ? 0 : transferOperationId.hashCode());
 		return result;
 	}
 
@@ -111,15 +109,15 @@ public class Transfer {
 				return false;
 		} else if (!accountTo.equals(other.accountTo))
 			return false;
-		if (transactionId == null) {
-			if (other.transactionId != null)
-				return false;
-		} else if (!transactionId.equals(other.transactionId))
-			return false;
 		if (transferDescription == null) {
 			if (other.transferDescription != null)
 				return false;
 		} else if (!transferDescription.equals(other.transferDescription))
+			return false;
+		if (transferOperationId == null) {
+			if (other.transferOperationId != null)
+				return false;
+		} else if (!transferOperationId.equals(other.transferOperationId))
 			return false;
 		return true;
 	}
@@ -132,18 +130,18 @@ public class Transfer {
 		private static final long serialVersionUID = 1L;
 		private long accountFrom;
 		private long accountTo;
-		private long transactionId;
+		private long transferOperationId;
 
 		public TransferPK() {
 			super();
 			// TODO Auto-generated constructor stub
 		}
 
-		public TransferPK(long accountFrom, long accountTo, long transactionId) {
+		public TransferPK(long accountFrom, long accountTo, long transferOperationId) {
 			super();
 			this.accountFrom = accountFrom;
 			this.accountTo = accountTo;
-			this.transactionId = transactionId;
+			this.transferOperationId = transferOperationId;
 		}
 
 		public long getAccountFrom() {
@@ -162,12 +160,12 @@ public class Transfer {
 			this.accountTo = accountTo;
 		}
 
-		public long getTransactionId() {
-			return transactionId;
+		public long getTransferOperationId() {
+			return transferOperationId;
 		}
 
-		public void setTransactionId(long transactionId) {
-			this.transactionId = transactionId;
+		public void setTransferOperationId(long transferOperationId) {
+			this.transferOperationId = transferOperationId;
 		}
 
 		@Override
@@ -177,7 +175,7 @@ public class Transfer {
 			result = prime * result + getEnclosingInstance().hashCode();
 			result = prime * result + (int) (accountFrom ^ (accountFrom >>> 32));
 			result = prime * result + (int) (accountTo ^ (accountTo >>> 32));
-			result = prime * result + (int) (transactionId ^ (transactionId >>> 32));
+			result = prime * result + (int) (transferOperationId ^ (transferOperationId >>> 32));
 			return result;
 		}
 
@@ -196,7 +194,7 @@ public class Transfer {
 				return false;
 			if (accountTo != other.accountTo)
 				return false;
-			if (transactionId != other.transactionId)
+			if (transferOperationId != other.transferOperationId)
 				return false;
 			return true;
 		}

@@ -12,22 +12,20 @@ import javax.persistence.Table;
 public class Tax {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "TAX_ID")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "TAX_ID", length = 2)
 	private int taxId;
 
-	@Column(name = "TAX_RATE")
-	private float taxRate;
+	@Column(name = "TAX_RATE", length = 4, nullable = false)
+	private double taxRate;
 
-	@Column(name = "TAX_DESCRIPTION")
+	@Column(name = "TAX_DESCRIPTION", length = 25, nullable = false)
 	private String taxDescription;
 
 	public Tax() {
-		super();
-		// TODO Auto-generated constructor stub
 	}
 
-	public Tax(int taxId, float taxRate, String taxDescription) {
+	public Tax(int taxId, double taxRate, String taxDescription) {
 		super();
 		this.taxId = taxId;
 		this.taxRate = taxRate;
@@ -42,11 +40,11 @@ public class Tax {
 		this.taxId = taxId;
 	}
 
-	public float getTaxRate() {
+	public double getTaxRate() {
 		return taxRate;
 	}
 
-	public void setTaxRate(float taxRate) {
+	public void setTaxRate(double taxRate) {
 		this.taxRate = taxRate;
 	}
 
@@ -64,7 +62,9 @@ public class Tax {
 		int result = 1;
 		result = prime * result + ((taxDescription == null) ? 0 : taxDescription.hashCode());
 		result = prime * result + taxId;
-		result = prime * result + Float.floatToIntBits(taxRate);
+		long temp;
+		temp = Double.doubleToLongBits(taxRate);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
 		return result;
 	}
 
@@ -84,7 +84,7 @@ public class Tax {
 			return false;
 		if (taxId != other.taxId)
 			return false;
-		if (Float.floatToIntBits(taxRate) != Float.floatToIntBits(other.taxRate))
+		if (Double.doubleToLongBits(taxRate) != Double.doubleToLongBits(other.taxRate))
 			return false;
 		return true;
 	}
