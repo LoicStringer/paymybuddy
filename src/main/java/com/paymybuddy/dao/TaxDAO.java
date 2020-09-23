@@ -1,10 +1,10 @@
 package com.paymybuddy.dao;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.paymybuddy.entity.Tax;
 
-public interface TaxDAO extends CrudRepository<Tax, Integer>{
+public interface TaxDAO extends JpaRepository<Tax, Integer>{
 
 	
 	

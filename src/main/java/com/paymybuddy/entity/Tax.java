@@ -12,7 +12,7 @@ import javax.persistence.Table;
 public class Tax {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "TAX_ID", length = 2)
 	private int taxId;
 

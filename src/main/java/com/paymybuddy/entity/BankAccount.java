@@ -17,7 +17,7 @@ import javax.persistence.Table;
 public class BankAccount {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "BANK_ACCOUNT_ID")
 	private long bankAccountId;
 

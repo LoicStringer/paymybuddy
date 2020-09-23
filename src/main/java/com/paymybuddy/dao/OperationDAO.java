@@ -1,9 +1,9 @@
 package com.paymybuddy.dao;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.paymybuddy.entity.Operation;
 
-public interface OperationDAO extends CrudRepository<Operation, Long>{
+public interface OperationDAO extends JpaRepository<Operation, Long>{
 
 }
