@@ -6,4 +6,5 @@ import com.paymybuddy.entity.Friendship;
 
 public interface FriendshipDAO extends JpaRepository<Friendship, Friendship.FriendshipPK>{
 
+	
 }

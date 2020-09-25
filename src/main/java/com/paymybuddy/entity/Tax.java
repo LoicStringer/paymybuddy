@@ -13,7 +13,7 @@ public class Tax {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "TAX_ID", length = 2)
+	@Column(name = "TAX_ID")
 	private int taxId;
 
 	@Column(name = "TAX_RATE", length = 4, nullable = false)

@@ -12,8 +12,18 @@ public class AccountService {
 	@Autowired
 	private AccountDAO accountDao;
 	
+	public Account getAccount (long accountId) {
+		return accountDao.findById(accountId).orElseThrow();
+	}
+	
 	public Account createAccount(Account createdAccount) {
 		return accountDao.save(createdAccount);
 	}
 
+	public Account addMoneyToAccount(Account account, double amount) {
+		double newBalance = account.getAccountBalance()+amount;
+		account.setAccountBalance(newBalance);
+		return accountDao.save(account);
+	}
+	
 }

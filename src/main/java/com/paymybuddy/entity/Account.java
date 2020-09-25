@@ -2,6 +2,7 @@ package com.paymybuddy.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +29,7 @@ public class Account {
 	@Column(name = "ACCOUNT_PASSWORD", length = 20, nullable = false)
 	private String accountUserPassword;
 
-	@Column(name = "ACCOUNT_BALANCE", nullable = true)
+	@Column(name = "ACCOUNT_BALANCE", nullable = false, columnDefinition = " double default 0")
 	private double accountBalance;
 
 	@OneToMany(mappedBy = "accountFrom")
@@ -40,13 +41,13 @@ public class Account {
 	@OneToMany(mappedBy = "friendWith")
 	private List<Friendship> friendWith;
 
-	@OneToMany(mappedBy = "friendOf")
+	@OneToMany(mappedBy = "friendOf",cascade = CascadeType.ALL,orphanRemoval = true)
 	private List<Friendship> friendOf;
 
-	@OneToMany(mappedBy = "holderAccountId")
+	@OneToMany(mappedBy = "holderAccountId",cascade = CascadeType.ALL,orphanRemoval = true)
 	private List<Providing> providingsToBankAccount;
 
-	@OneToMany(mappedBy = "accountHolderId")
+	@OneToMany(mappedBy = "accountHolderId",cascade = CascadeType.ALL,orphanRemoval = true)
 	private List<BankAccount> ownedBankAccounts;
 
 	public Account() {

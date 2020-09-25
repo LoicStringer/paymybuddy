@@ -31,7 +31,7 @@ public class BankAccount {
 	private String bankAccountDescription;
 
 	@ManyToOne
-	@JoinColumn(name = "ACCOUNT_HOLDER_ID")
+	@JoinColumn(name = "ACCOUNT_HOLDER_ID",nullable=false)
 	private Account accountHolderId;
 
 	@OneToMany(mappedBy = "bankAccountId")
