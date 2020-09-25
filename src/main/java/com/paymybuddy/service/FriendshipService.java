@@ -16,4 +16,5 @@ public class FriendshipService {
 		return friendshipDao.save(friendshipToAdd);
 	}
 	
+	
 }

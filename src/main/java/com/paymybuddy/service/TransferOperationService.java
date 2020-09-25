@@ -33,13 +33,15 @@ public class TransferOperationService {
 	
 	
 	@Transactional
-	public TransferOperationInfo processTransferOperation (TransferOperation transferOperationInProgress) {
+	public TransferOperationInfo processTransferOperation (TransferOperationForm transferOperatioForm) {
 		
-		TransferOperationInfo transferOperationCompletedInfo = new TransferOperationInfo();
+		TransferOperation transferOperationInProgress = buildTransferOperation(transferOperatioForm);
 		
 		accountService.addMoneyToAccount(transferOperationInProgress.getTransfer().getAccountFrom(), - transferOperationInProgress.getOperation().getOperationAmount());
 		accountService.addMoneyToAccount(transferOperationInProgress.getTransfer().getAccountTo(), transferOperationInProgress.getOperation().getOperationAmount());
 		transferService.saveTransfer(transferOperationInProgress.getTransfer());
+		
+		TransferOperationInfo transferOperationCompletedInfo = new TransferOperationInfo();
 		
 		transferOperationCompletedInfo.setMessage("Transfer operation has succeed.");
 		
@@ -47,7 +49,7 @@ public class TransferOperationService {
 	}
 	
 	
-	public TransferOperation buildTransferOperation(TransferOperationForm transferOperatioForm) {
+	private TransferOperation buildTransferOperation(TransferOperationForm transferOperatioForm) {
 		
 		Tax taxApplied = taxService.getTax(transferOperatioForm.getTaxApplied());
 		
