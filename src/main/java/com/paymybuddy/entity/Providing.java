@@ -1,6 +1,9 @@
 package com.paymybuddy.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -14,6 +17,11 @@ import javax.persistence.Table;
 @IdClass(ProvidingPK.class)
 public class Providing {
 
+	public enum ProvidingType{
+		AccountToBankAccount,
+		BankAccountToAccount
+	}
+	
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "ACCOUNT_ID")
@@ -30,6 +38,11 @@ public class Providing {
 	@JoinColumn(name = "PROVIDING_OPERATION_ID", referencedColumnName = "OPERATION_ID")
 	private Operation providingOperationId;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name="PROVIDING_TYPE",length = 20,nullable = false)
+	private ProvidingType providingType;
+	
+	
 	public Providing() {
 
 	}

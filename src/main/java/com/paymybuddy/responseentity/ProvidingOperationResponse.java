@@ -3,15 +3,14 @@ package com.paymybuddy.responseentity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TransferOperationInfo {
+public class ProvidingOperationResponse {
 
 	private String message;
-	
-	public TransferOperationInfo() {
 
+	public ProvidingOperationResponse() {
 	}
 
-	public TransferOperationInfo(String message) {
+	public ProvidingOperationResponse(String message) {
 		super();
 		this.message = message;
 	}

@@ -12,7 +12,7 @@ import com.paymybuddy.entity.Friendship;
 import com.paymybuddy.entity.Tax;
 import com.paymybuddy.form.FriendshipForm;
 import com.paymybuddy.form.TransferOperationForm;
-import com.paymybuddy.responseentity.TransferOperationInfo;
+import com.paymybuddy.responseentity.TransferOperationResponse;
 import com.paymybuddy.service.AccountService;
 import com.paymybuddy.service.BankAccountService;
 import com.paymybuddy.service.FriendshipService;
@@ -58,9 +58,9 @@ public class TesterController {
 	}
 	
 	@PostMapping("/transferOperation")
-	public ResponseEntity<TransferOperationInfo> processTransferOperation
+	public ResponseEntity<TransferOperationResponse> processTransferOperation
 	(@RequestBody TransferOperationForm transferOperationForm){
-		TransferOperationInfo transferOperationInfo = transferOperationService.processTransferOperation(transferOperationForm);
+		TransferOperationResponse transferOperationInfo = transferOperationService.processTransferOperation(transferOperationForm);
 		return ResponseEntity.ok(transferOperationInfo);
 	}
 }

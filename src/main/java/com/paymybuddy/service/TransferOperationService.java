@@ -14,7 +14,7 @@ import com.paymybuddy.entity.Tax;
 import com.paymybuddy.entity.Transfer;
 import com.paymybuddy.form.TransferOperationForm;
 import com.paymybuddy.model.TransferOperation;
-import com.paymybuddy.responseentity.TransferOperationInfo;
+import com.paymybuddy.responseentity.TransferOperationResponse;
 
 @Service
 public class TransferOperationService {
@@ -33,7 +33,7 @@ public class TransferOperationService {
 	
 	
 	@Transactional
-	public TransferOperationInfo processTransferOperation (TransferOperationForm transferOperatioForm) {
+	public TransferOperationResponse processTransferOperation (TransferOperationForm transferOperatioForm) {
 		
 		TransferOperation transferOperationInProgress = buildTransferOperation(transferOperatioForm);
 		
@@ -41,7 +41,7 @@ public class TransferOperationService {
 		accountService.addMoneyToAccount(transferOperationInProgress.getTransfer().getAccountTo(), transferOperationInProgress.getOperation().getOperationAmount());
 		transferService.saveTransfer(transferOperationInProgress.getTransfer());
 		
-		TransferOperationInfo transferOperationCompletedInfo = new TransferOperationInfo();
+		TransferOperationResponse transferOperationCompletedInfo = new TransferOperationResponse();
 		
 		transferOperationCompletedInfo.setMessage("Transfer operation has succeed.");
 		

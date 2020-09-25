@@ -12,10 +12,17 @@ public class BankAccountService {
 	@Autowired
 	private BankAccountDAO bankAccountDao;
 	
+	public BankAccount getBankAccount (long bankAccountId) {
+		return bankAccountDao.findById(bankAccountId).orElseThrow();
+	}
+	
 	public BankAccount addBankAccount(BankAccount bankAccountToAdd) {
 		return bankAccountDao.save(bankAccountToAdd);
 	}
 	
-	
+	public boolean askAuthorisationToTheBank() {
+		//TODO linked method to online payment
+		return true;
+	}
 	
 }
