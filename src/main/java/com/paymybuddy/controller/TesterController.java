@@ -10,6 +10,7 @@ import com.paymybuddy.entity.Account;
 import com.paymybuddy.entity.BankAccount;
 import com.paymybuddy.entity.Friendship;
 import com.paymybuddy.entity.Tax;
+import com.paymybuddy.form.FriendshipForm;
 import com.paymybuddy.form.TransferOperationForm;
 import com.paymybuddy.responseentity.TransferOperationInfo;
 import com.paymybuddy.service.AccountService;
@@ -42,8 +43,8 @@ public class TesterController {
 	}
 
 	@PostMapping("/addFriend")
-	public ResponseEntity<Friendship> addFriend (@RequestBody Friendship friendshipToAdd){
-		return ResponseEntity.ok(friendshipService.addFriendship(friendshipToAdd));
+	public ResponseEntity<Friendship> addFriend (@RequestBody FriendshipForm frienshipForm){
+		return ResponseEntity.ok(friendshipService.addFriendWithHisEmail(frienshipForm));
 	}
 	
 	@PostMapping("/addBankAccount")

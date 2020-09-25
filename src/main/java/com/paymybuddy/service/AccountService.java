@@ -16,6 +16,11 @@ public class AccountService {
 		return accountDao.findById(accountId).orElseThrow();
 	}
 	
+	public Account getAccountByEmail(String email) {
+		return accountDao.findByAccountEmailEquals(email).orElseThrow();
+	}
+	
+	
 	public Account createAccount(Account createdAccount) {
 		return accountDao.save(createdAccount);
 	}
