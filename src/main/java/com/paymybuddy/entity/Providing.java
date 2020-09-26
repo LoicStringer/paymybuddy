@@ -17,11 +17,10 @@ import javax.persistence.Table;
 @IdClass(ProvidingPK.class)
 public class Providing {
 
-	public enum ProvidingType{
-		AccountToBankAccount,
-		BankAccountToAccount
+	public enum ProvidingType {
+		ACCOUNTTOBANKACCOUNT, BANKACCOUNTTOACCOUNT
 	}
-	
+
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "ACCOUNT_ID")
@@ -39,19 +38,20 @@ public class Providing {
 	private Operation providingOperationId;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="PROVIDING_TYPE",length = 20,nullable = false)
+	@Column(name = "PROVIDING_TYPE", length = 20, nullable = false)
 	private ProvidingType providingType;
-	
-	
+
 	public Providing() {
 
 	}
 
-	public Providing(Account holderAccountId, BankAccount bankAccountId, Operation providingOperationId) {
+	public Providing(Account holderAccountId, BankAccount bankAccountId, Operation providingOperationId,
+			ProvidingType providingType) {
 		super();
 		this.holderAccountId = holderAccountId;
 		this.bankAccountId = bankAccountId;
 		this.providingOperationId = providingOperationId;
+		this.providingType = providingType;
 	}
 
 	public Account getHolderAccountId() {
@@ -78,6 +78,14 @@ public class Providing {
 		this.providingOperationId = providingOperationId;
 	}
 
+	public ProvidingType getProvidingType() {
+		return providingType;
+	}
+
+	public void setProvidingType(ProvidingType providingType) {
+		this.providingType = providingType;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -85,6 +93,7 @@ public class Providing {
 		result = prime * result + ((bankAccountId == null) ? 0 : bankAccountId.hashCode());
 		result = prime * result + ((holderAccountId == null) ? 0 : holderAccountId.hashCode());
 		result = prime * result + ((providingOperationId == null) ? 0 : providingOperationId.hashCode());
+		result = prime * result + ((providingType == null) ? 0 : providingType.hashCode());
 		return result;
 	}
 
@@ -112,9 +121,9 @@ public class Providing {
 				return false;
 		} else if (!providingOperationId.equals(other.providingOperationId))
 			return false;
+		if (providingType != other.providingType)
+			return false;
 		return true;
 	}
 
-	
-	
 }

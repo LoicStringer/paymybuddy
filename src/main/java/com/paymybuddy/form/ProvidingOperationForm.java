@@ -2,8 +2,6 @@ package com.paymybuddy.form;
 
 import org.springframework.stereotype.Component;
 
-import com.paymybuddy.entity.Providing.ProvidingType;
-
 @Component
 public class ProvidingOperationForm {
 
@@ -11,13 +9,13 @@ public class ProvidingOperationForm {
 	private long bankAccountId;
 	private double amount;
 	private int taxApplied;
-	private ProvidingType providingType;
+	private String providingType;
 	
 	public ProvidingOperationForm() {
 	}
 
 	public ProvidingOperationForm(long accountId, long bankAccountId, double amount, int taxApplied,
-			ProvidingType providingType) {
+			String providingType) {
 		super();
 		this.accountId = accountId;
 		this.bankAccountId = bankAccountId;
@@ -58,11 +56,11 @@ public class ProvidingOperationForm {
 		this.taxApplied = taxApplied;
 	}
 
-	public ProvidingType getProvidingType() {
+	public String getProvidingType() {
 		return providingType;
 	}
 
-	public void setProvidingType(ProvidingType providingType) {
+	public void setProvidingType(String providingType) {
 		this.providingType = providingType;
 	}
 
@@ -95,7 +93,10 @@ public class ProvidingOperationForm {
 			return false;
 		if (bankAccountId != other.bankAccountId)
 			return false;
-		if (providingType != other.providingType)
+		if (providingType == null) {
+			if (other.providingType != null)
+				return false;
+		} else if (!providingType.equals(other.providingType))
 			return false;
 		if (taxApplied != other.taxApplied)
 			return false;

@@ -13,9 +13,7 @@ import com.paymybuddy.entity.Providing.ProvidingType;
 import com.paymybuddy.entity.Tax;
 import com.paymybuddy.form.ProvidingOperationForm;
 import com.paymybuddy.model.ProvidingOperation;
-import com.paymybuddy.model.TransferOperation;
 import com.paymybuddy.responseentity.ProvidingOperationResponse;
-import com.paymybuddy.responseentity.TransferOperationResponse;
 
 @Service
 public class ProvidingOperationService {
@@ -30,22 +28,34 @@ public class ProvidingOperationService {
 
 	@Autowired
 	private BankAccountService bankAccountService;
+	
+	@Autowired
+	private ProvidingService providingService;
 
 	@Transactional
 	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationForm providingOperationForm) {
-
-		ProvidingOperation providingOperationInProgress = buildProvidingOperation(providingOperationForm);
-
-		if (providingOperationForm.getProvidingType() == ProvidingType.AccountToBankAccount)
-			accountService.addMoneyToAccount(providingOperationInProgress.getProviding().getHolderAccountId(),
-					-providingOperationInProgress.getOperation().getOperationAmount());
-
-		accountService.addMoneyToAccount(providingOperationInProgress.getProviding().getHolderAccountId(),
-				providingOperationInProgress.getOperation().getOperationAmount());
-
-		ProvidingOperationResponse providingOperationCompletedInfo = new ProvidingOperationResponse();
-		providingOperationCompletedInfo.setMessage("Providing operation has succed");
 		
+		ProvidingOperationResponse providingOperationCompletedInfo = new ProvidingOperationResponse();
+		boolean success = bankAccountService.askAuthorisationToTheBank();
+		
+		if(success!=true) {
+			providingOperationCompletedInfo.setMessage("Providing operation has failed");
+			//throw exception
+		}
+			
+		ProvidingOperation providingOperationInProgress = buildProvidingOperation(providingOperationForm);
+		System.out.println(providingOperationInProgress.getProviding().getProvidingType());
+		switch(providingOperationInProgress.getProviding().getProvidingType()) {
+			case ACCOUNTTOBANKACCOUNT : accountService.addMoneyToAccount(providingOperationInProgress.getProviding().getHolderAccountId(), 
+				- providingOperationInProgress.getOperation().getOperationAmount());
+										break;
+			case BANKACCOUNTTOACCOUNT : accountService.addMoneyToAccount(providingOperationInProgress.getProviding().getHolderAccountId(),
+				providingOperationInProgress.getOperation().getOperationAmount());
+										break;
+		}
+		
+		providingService.saveProviding(providingOperationInProgress.getProviding());
+		providingOperationCompletedInfo.setMessage("Providing operation has succed");
 		
 		return providingOperationCompletedInfo;
 	}
@@ -66,6 +76,7 @@ public class ProvidingOperationService {
 		buildedProviding.setHolderAccountId(accountService.getAccount(providingOperationForm.getAccountId()));
 		buildedProviding.setBankAccountId(bankAccountService.getBankAccount(providingOperationForm.getBankAccountId()));
 		buildedProviding.setProvidingOperationId(buildedOperation);
+		buildedProviding.setProvidingType(ProvidingType.valueOf(providingOperationForm.getProvidingType()));
 
 		ProvidingOperation buildedProvidingOperation = new ProvidingOperation(buildedProviding, buildedOperation);
 

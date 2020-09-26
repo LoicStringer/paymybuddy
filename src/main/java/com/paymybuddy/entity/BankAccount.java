@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "BANK_ACCOUNT")
 public class BankAccount {
@@ -34,6 +36,7 @@ public class BankAccount {
 	@JoinColumn(name = "ACCOUNT_HOLDER_ID",nullable=false)
 	private Account accountHolderId;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "bankAccountId")
 	private List<Providing> providingsToAccount;
 

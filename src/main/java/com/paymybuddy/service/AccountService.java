@@ -17,7 +17,7 @@ public class AccountService {
 	}
 	
 	public Account getAccountByEmail(String email) {
-		return accountDao.findByAccountEmailEquals(email).orElseThrow();
+		return accountDao.findByAccountUserEmailEquals(email).orElseThrow();
 	}
 	
 	

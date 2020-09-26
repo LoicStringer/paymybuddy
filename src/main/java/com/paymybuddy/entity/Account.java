@@ -2,7 +2,6 @@ package com.paymybuddy.entity;
 
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "ACCOUNT")
@@ -32,22 +33,28 @@ public class Account {
 	@Column(name = "ACCOUNT_BALANCE", nullable = false, columnDefinition = " double default 0")
 	private double accountBalance;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "accountFrom")
 	private List<Transfer> transfersFrom;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "accountTo")
 	private List<Transfer> transfersTo;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "friendWith")
 	private List<Friendship> friendWith;
 
-	@OneToMany(mappedBy = "friendOf",cascade = CascadeType.ALL,orphanRemoval = true)
+	@JsonIgnore
+	@OneToMany(mappedBy = "friendOf")
 	private List<Friendship> friendOf;
 
-	@OneToMany(mappedBy = "holderAccountId",cascade = CascadeType.ALL,orphanRemoval = true)
+	@JsonIgnore
+	@OneToMany(mappedBy = "holderAccountId")
 	private List<Providing> providingsToBankAccount;
 
-	@OneToMany(mappedBy = "accountHolderId",cascade = CascadeType.ALL,orphanRemoval = true)
+	@JsonIgnore
+	@OneToMany(mappedBy = "accountHolderId")
 	private List<BankAccount> ownedBankAccounts;
 
 	public Account() {

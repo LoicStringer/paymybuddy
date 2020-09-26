@@ -8,7 +8,7 @@ import com.paymybuddy.entity.Account;
 
 public interface AccountDAO extends JpaRepository<Account, Long>{
 
-	Optional<Account> findByAccountEmailEquals(String email);
+	Optional<Account> findByAccountUserEmailEquals(String email);
 
 	
 }
