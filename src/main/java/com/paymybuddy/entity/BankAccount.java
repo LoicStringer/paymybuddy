@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
 
 @Entity
 @Table(name = "BANK_ACCOUNT")
@@ -23,17 +24,20 @@ public class BankAccount {
 	@Column(name = "BANK_ACCOUNT_ID")
 	private long bankAccountId;
 
+	@NotNull
 	@Column(name = "BANK_ACCOUNT_IBAN", length = 35, unique = true)
 	private String bankAccountIban;
 
-	@Column(name = "BANK_ACCOUNT_HOLDER_NAME", length = 30, nullable = false)
+	@NotNull
+	@Column(name = "BANK_ACCOUNT_HOLDER_NAME", length = 30)
 	private String bankAccountHolderName;
 
-	@Column(name = "BANK_ACCOUNT_DESCRIPTION", length = 20, nullable = true)
+	@Column(name = "BANK_ACCOUNT_DESCRIPTION", length = 20)
 	private String bankAccountDescription;
 
 	@ManyToOne
-	@JoinColumn(name = "ACCOUNT_HOLDER_ID",nullable=false)
+	@NotNull
+	@JoinColumn(name = "ACCOUNT_HOLDER_ID")
 	private Account accountHolderId;
 
 	@JsonIgnore

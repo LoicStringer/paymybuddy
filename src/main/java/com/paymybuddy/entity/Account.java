@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
 
 @Entity
 @Table(name = "ACCOUNT")
@@ -21,16 +22,19 @@ public class Account {
 	@Column(name = "ACCOUNT_ID")
 	private long accountId;
 
-	@Column(name = "ACCOUNT_NAME", length = 20, nullable = false)
+	@NotNull
+	@Column(name = "ACCOUNT_NAME", length = 20)
 	private String accountUserName;
 
-	@Column(name = "ACCOUNT_EMAIL", length = 50, nullable = false, unique = true)
+	@NotNull
+	@Column(name = "ACCOUNT_EMAIL", length = 50, unique = true)
 	private String accountUserEmail;
 
-	@Column(name = "ACCOUNT_PASSWORD", length = 20, nullable = false)
+	@NotNull
+	@Column(name = "ACCOUNT_PASSWORD", length = 20)
 	private String accountUserPassword;
 
-	@Column(name = "ACCOUNT_BALANCE", nullable = false, columnDefinition = " double default 0")
+	@Column(name = "ACCOUNT_BALANCE", columnDefinition = " double default 0")
 	private double accountBalance;
 
 	@JsonIgnore

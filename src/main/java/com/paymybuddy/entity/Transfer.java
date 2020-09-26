@@ -31,7 +31,7 @@ public class Transfer {
 	@JoinColumn(name = "TRANSFER_OPERATION_ID", referencedColumnName = "OPERATION_ID")
 	private Operation transferOperationId;
 
-	@Column(name = "TRANSFER_DESCRIPTION", length = 20, nullable = true)
+	@Column(name = "TRANSFER_DESCRIPTION", length = 20)
 	private String transferDescription;
 
 	public Transfer() {

@@ -1,5 +1,7 @@
 package com.paymybuddy.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,28 +47,28 @@ public class TesterController {
 	private ProvidingOperationService providingOperationService;
 
 	@PostMapping("/createAccount")
-	public ResponseEntity<Account> createAccount(@RequestBody Account accountToCreate) {
+	public ResponseEntity<Account> createAccount(@Valid @RequestBody Account accountToCreate) {
 		return ResponseEntity.ok(accountService.createAccount(accountToCreate));
 	}
 
 	@PostMapping("/addFriend")
-	public ResponseEntity<Friendship> addFriend(@RequestBody FriendshipForm friendshipForm) {
+	public ResponseEntity<Friendship> addFriend(@Valid @RequestBody FriendshipForm friendshipForm) {
 		return ResponseEntity.ok(friendshipService.addFriendWithHisEmail(friendshipForm));
 	}
 
 	@PostMapping("/addBankAccount")
-	public ResponseEntity<BankAccount> addBankAccount(@RequestBody BankAccountForm bankAccountForm) {
+	public ResponseEntity<BankAccount> addBankAccount(@Valid @RequestBody BankAccountForm bankAccountForm) {
 		return ResponseEntity.ok(bankAccountService.addBankAccount(bankAccountForm));
 	}
 
 	@PostMapping("/addTax")
-	public ResponseEntity<Tax> addTax(@RequestBody Tax taxToAdd) {
+	public ResponseEntity<Tax> addTax(@Valid @RequestBody Tax taxToAdd) {
 		return ResponseEntity.ok(taxService.addTaxToDb(taxToAdd));
 	}
 
 	@PostMapping("/transferOperation")
 	public ResponseEntity<TransferOperationResponse> processTransferOperation(
-			@RequestBody TransferOperationForm transferOperationForm) {
+			@Valid @RequestBody TransferOperationForm transferOperationForm) {
 		TransferOperationResponse transferOperationInfo = transferOperationService
 				.processTransferOperation(transferOperationForm);
 		return ResponseEntity.ok(transferOperationInfo);
@@ -74,7 +76,7 @@ public class TesterController {
 
 	@PostMapping("/providingOperation")
 	public ResponseEntity<ProvidingOperationResponse> processProvidingOperation(
-			@RequestBody ProvidingOperationForm providingOperationForm) {
+			@Valid @RequestBody ProvidingOperationForm providingOperationForm) {
 		ProvidingOperationResponse providingOperationInfo = providingOperationService
 				.processProvidingOperation(providingOperationForm);
 		return ResponseEntity.ok(providingOperationInfo);
