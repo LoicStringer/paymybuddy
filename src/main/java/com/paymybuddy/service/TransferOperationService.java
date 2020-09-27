@@ -9,11 +9,11 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.paymybuddy.dto.TransferOperationDTO;
 import com.paymybuddy.entity.Operation;
 import com.paymybuddy.entity.Tax;
 import com.paymybuddy.entity.Transfer;
 import com.paymybuddy.form.TransferOperationForm;
-import com.paymybuddy.model.TransferOperation;
 import com.paymybuddy.responseentity.TransferOperationResponse;
 
 @Service
@@ -33,42 +33,63 @@ public class TransferOperationService {
 	
 	
 	@Transactional
-	public TransferOperationResponse processTransferOperation (TransferOperationForm transferOperatioForm) {
-		
-		TransferOperation transferOperationInProgress = buildTransferOperation(transferOperatioForm);
-		
-		accountService.addMoneyToAccount(transferOperationInProgress.getTransfer().getAccountFrom(), - transferOperationInProgress.getOperation().getOperationAmount());
-		accountService.addMoneyToAccount(transferOperationInProgress.getTransfer().getAccountTo(), transferOperationInProgress.getOperation().getOperationAmount());
-		transferService.saveTransfer(transferOperationInProgress.getTransfer());
+	public TransferOperationResponse processTransferOperation (TransferOperationDTO transferOperationDto) {
 		
 		TransferOperationResponse transferOperationCompletedInfo = new TransferOperationResponse();
+		
+		if (accountService.getAccount(transferOperationDto.getAccountFromId()).getAccountBalance()<=0) {
+			//throw exception
+			transferOperationCompletedInfo.setMessage("Failed");
+		}
+			
+		Operation operationInProgress = buildOperationFromTransferOperationDto(transferOperationDto);
+		Transfer transferInProgress = buildTransferFromTransferOperationDto(transferOperationDto);
+		
+		transferInProgress.setTransferOperationId(operationService.saveOperation(operationInProgress));
+		
+		accountService.addMoneyToAccount(transferInProgress.getAccountFrom(), - operationInProgress.getOperationAmount());
+		accountService.addMoneyToAccount(transferInProgress.getAccountTo(), operationInProgress.getOperationAmount());
+		transferService.saveTransfer(transferInProgress);
 		
 		transferOperationCompletedInfo.setMessage("Transfer operation has succeed.");
 		
 		return transferOperationCompletedInfo;
 	}
 	
+	public TransferOperationDTO convertTransferOperatioFormToTransferOperatioDto(TransferOperationForm transferOperationForm) {
+		
+		TransferOperationDTO transferOperationInProgress = new TransferOperationDTO();
+		
+		transferOperationInProgress.setAccountFromId(transferOperationForm.getAccountFromId());
+		transferOperationInProgress.setAccountToId(transferOperationForm.getAccountToId());
+		transferOperationInProgress.setAmount(transferOperationForm.getAmount());
+		transferOperationInProgress.setTaxApplied(transferOperationForm.getTaxApplied());
+		transferOperationInProgress.setTransferDescription(transferOperationForm.getTransferDescription());
+		
+		return transferOperationInProgress;
+	}
 	
-	private TransferOperation buildTransferOperation(TransferOperationForm transferOperatioForm) {
-		
-		Tax taxApplied = taxService.getTax(transferOperatioForm.getTaxApplied());
-		
-		Operation buildedOperation = new Operation();
-		buildedOperation.setOperationAmount(transferOperatioForm.getAmount());
-		buildedOperation.setOperationDate(Instant.now());
-		buildedOperation.setOperationFee(operationService.calculateOperationFee(taxApplied, transferOperatioForm.getAmount()));
-		buildedOperation.setOperationTax(taxApplied);
-		buildedOperation = operationService.saveOperation(buildedOperation);
-		
+	private Transfer buildTransferFromTransferOperationDto(TransferOperationDTO transferOperationDTO) {
+	
 		Transfer buildedTransfer = new Transfer();
-		buildedTransfer.setAccountFrom(accountService.getAccount(transferOperatioForm.getAccountFromId()));
-		buildedTransfer.setAccountTo(accountService.getAccount(transferOperatioForm.getAccountToId()));
-		buildedTransfer.setTransferDescription(transferOperatioForm.getTransferDescription());
-		buildedTransfer.setTransferOperationId(buildedOperation);
+		buildedTransfer.setAccountFrom(accountService.getAccount(transferOperationDTO.getAccountFromId()));
+		buildedTransfer.setAccountTo(accountService.getAccount(transferOperationDTO.getAccountToId()));
+		buildedTransfer.setTransferDescription(transferOperationDTO.getTransferDescription());
+	
+		return buildedTransfer;
+	}
 		
-		TransferOperation buildedTransferOperation = new TransferOperation(buildedTransfer,buildedOperation);
+	private Operation buildOperationFromTransferOperationDto(TransferOperationDTO transferOperationDTO) {
 		
-		return buildedTransferOperation;
+		Tax taxApplied = taxService.getTax(transferOperationDTO.getTaxApplied());
+		Operation buildedOperation = new Operation();
+		
+		buildedOperation.setOperationAmount(transferOperationDTO.getAmount());
+		buildedOperation.setOperationDate(Instant.now());
+		buildedOperation.setOperationFee(operationService.calculateOperationFee(taxApplied, transferOperationDTO.getAmount()));
+		buildedOperation.setOperationTax(taxApplied);
+	
+		return buildedOperation;
 	}
 	
 	

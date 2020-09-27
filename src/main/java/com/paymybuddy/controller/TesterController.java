@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.paymybuddy.dto.ProvidingOperationDTO;
+import com.paymybuddy.dto.TransferOperationDTO;
 import com.paymybuddy.entity.Account;
 import com.paymybuddy.entity.BankAccount;
 import com.paymybuddy.entity.Friendship;
@@ -69,16 +71,26 @@ public class TesterController {
 	@PostMapping("/transferOperation")
 	public ResponseEntity<TransferOperationResponse> processTransferOperation(
 			@Valid @RequestBody TransferOperationForm transferOperationForm) {
+		
+		TransferOperationDTO transferOperationInProgress = 
+				transferOperationService.convertTransferOperatioFormToTransferOperatioDto(transferOperationForm);
+		
 		TransferOperationResponse transferOperationInfo = transferOperationService
-				.processTransferOperation(transferOperationForm);
+				.processTransferOperation(transferOperationInProgress);
+		
 		return ResponseEntity.ok(transferOperationInfo);
 	}
 
 	@PostMapping("/providingOperation")
 	public ResponseEntity<ProvidingOperationResponse> processProvidingOperation(
 			@Valid @RequestBody ProvidingOperationForm providingOperationForm) {
-		ProvidingOperationResponse providingOperationInfo = providingOperationService
-				.processProvidingOperation(providingOperationForm);
+		
+		ProvidingOperationDTO providingOperationInProgress = 
+				providingOperationService.convertProvidingFormToProvidingOperationDto(providingOperationForm);
+		
+		ProvidingOperationResponse providingOperationInfo = 
+				providingOperationService.processProvidingOperation(providingOperationInProgress);
+		
 		return ResponseEntity.ok(providingOperationInfo);
 	}
 }
