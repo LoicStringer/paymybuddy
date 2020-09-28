@@ -13,6 +13,8 @@ import com.paymybuddy.dto.TransferOperationDTO;
 import com.paymybuddy.entity.Operation;
 import com.paymybuddy.entity.Tax;
 import com.paymybuddy.entity.Transfer;
+import com.paymybuddy.exception.InsufficientBalanceException;
+import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.TransferOperationForm;
 import com.paymybuddy.responseentity.TransferOperationResponse;
 
@@ -32,16 +34,11 @@ public class TransferOperationService {
 	private TransferService transferService;
 	
 	
-	@Transactional
-	public TransferOperationResponse processTransferOperation (TransferOperationDTO transferOperationDto) {
+	@Transactional(rollbackOn = Exception.class)
+	public TransferOperationResponse processTransferOperation (TransferOperationDTO transferOperationDto) throws InsufficientBalanceException, ResourceNotFoundException {
 		
 		TransferOperationResponse transferOperationCompletedInfo = new TransferOperationResponse();
-		
-		if (accountService.getAccount(transferOperationDto.getAccountFromId()).getAccountBalance()<=0) {
-			//throw exception
-			transferOperationCompletedInfo.setMessage("Failed");
-		}
-			
+					
 		Operation operationInProgress = buildOperationFromTransferOperationDto(transferOperationDto);
 		Transfer transferInProgress = buildTransferFromTransferOperationDto(transferOperationDto);
 		
@@ -52,6 +49,7 @@ public class TransferOperationService {
 		transferService.saveTransfer(transferInProgress);
 		
 		transferOperationCompletedInfo.setMessage("Transfer operation has succeed.");
+		transferOperationCompletedInfo.setTransferOperationDto(transferOperationDto);
 		
 		return transferOperationCompletedInfo;
 	}
@@ -69,7 +67,7 @@ public class TransferOperationService {
 		return transferOperationInProgress;
 	}
 	
-	private Transfer buildTransferFromTransferOperationDto(TransferOperationDTO transferOperationDTO) {
+	private Transfer buildTransferFromTransferOperationDto(TransferOperationDTO transferOperationDTO) throws ResourceNotFoundException {
 	
 		Transfer buildedTransfer = new Transfer();
 		buildedTransfer.setAccountFrom(accountService.getAccount(transferOperationDTO.getAccountFromId()));

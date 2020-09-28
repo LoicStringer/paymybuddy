@@ -12,6 +12,9 @@ import com.paymybuddy.entity.Operation;
 import com.paymybuddy.entity.Providing;
 import com.paymybuddy.entity.Providing.ProvidingType;
 import com.paymybuddy.entity.Tax;
+import com.paymybuddy.exception.BankProcessFailedException;
+import com.paymybuddy.exception.InsufficientBalanceException;
+import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.ProvidingOperationForm;
 import com.paymybuddy.responseentity.ProvidingOperationResponse;
 
@@ -32,34 +35,32 @@ public class ProvidingOperationService {
 	@Autowired
 	private ProvidingService providingService;
 
-	@Transactional
-	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationDTO providingOperationDto) {
+	@Transactional(rollbackOn = Exception.class)
+	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationDTO providingOperationDto) throws InsufficientBalanceException, BankProcessFailedException, ResourceNotFoundException {
 
 		ProvidingOperationResponse providingOperationCompletedInfo = new ProvidingOperationResponse();
-		boolean success = bankAccountService.askAuthorisationToTheBank();
-
-		if (success != true) {
-			providingOperationCompletedInfo.setMessage("Providing operation has failed");
-			// throw exception
-		}
-
+		
 		Operation operationInProgress = buildOperationInProgressFromProvidingOperatioDto(providingOperationDto);
 		Providing providingInProgress = buildProvidingInProgressFromProvidingOperatioDto(providingOperationDto);
 		providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
 
 		switch (providingInProgress.getProvidingType()) {
 		case ACCOUNTTOBANKACCOUNT:
+			bankAccountService.bankAccountDepositProcess();
 			accountService.addMoneyToAccount(providingInProgress.getHolderAccountId(),
 					-operationInProgress.getOperationAmount());
 			break;
 		case BANKACCOUNTTOACCOUNT:
+			bankAccountService.bankAccountWithdrawProcess();
 			accountService.addMoneyToAccount(providingInProgress.getHolderAccountId(),
 					operationInProgress.getOperationAmount());
 			break;
 		}
 
 		providingService.saveProviding(providingInProgress);
+		
 		providingOperationCompletedInfo.setMessage("Providing operation has succed");
+		providingOperationCompletedInfo.setProvidingOperationDto(providingOperationDto);
 
 		return providingOperationCompletedInfo;
 	}
@@ -92,7 +93,7 @@ public class ProvidingOperationService {
 		return buildedOperation;
 	}
 
-	private Providing buildProvidingInProgressFromProvidingOperatioDto(ProvidingOperationDTO providingOperationDto) {
+	private Providing buildProvidingInProgressFromProvidingOperatioDto(ProvidingOperationDTO providingOperationDto) throws ResourceNotFoundException {
 
 		Providing buildedProviding = new Providing();
 

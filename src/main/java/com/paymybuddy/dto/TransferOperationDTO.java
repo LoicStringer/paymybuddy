@@ -107,5 +107,11 @@ public class TransferOperationDTO {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "TransferOperationDTO [accountFromId=" + accountFromId + ", accountToId=" + accountToId + ", amount="
+				+ amount + ", transferDescription=" + transferDescription + ", taxApplied=" + taxApplied + "]";
+	}
+
 		
 }

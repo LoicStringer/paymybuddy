@@ -102,6 +102,12 @@ public class ProvidingOperationDTO {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "ProvidingOperationDTO [accountId=" + accountId + ", bankAccountId=" + bankAccountId + ", amount="
+				+ amount + ", taxApplied=" + taxApplied + ", providingType=" + providingType + "]";
+	}
 	
 	
 	

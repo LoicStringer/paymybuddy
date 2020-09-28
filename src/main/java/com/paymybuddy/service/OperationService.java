@@ -13,8 +13,6 @@ public class OperationService {
 	@Autowired
 	private OperationDAO operationDao;
 	
-	
-	
 	public Operation saveOperation(Operation operationToSave) {
 		return operationDao.save(operationToSave);
 	}

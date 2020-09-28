@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.paymybuddy.dao.FriendshipDAO;
+import com.paymybuddy.dto.FriendshipDTO;
 import com.paymybuddy.entity.Friendship;
+import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.FriendshipForm;
 
 @Service
@@ -20,12 +22,24 @@ public class FriendshipService {
 		return friendshipDao.save(friendshipToAdd);
 	}
 	
-	public Friendship addFriendWithHisEmail(FriendshipForm friendshipForm) {
-		Friendship addedFriendship = new Friendship();
+	public Friendship buildFriendship (FriendshipDTO friendshipDto) throws ResourceNotFoundException {
 		
-		addedFriendship.setFriendOf(accountService.getAccount(friendshipForm.getMyAccountId()));
-		addedFriendship.setFriendWith(accountService.getAccountByEmail(friendshipForm.getFriendEmail()));
-		friendshipDao.save(addedFriendship);
-		return addedFriendship;
+		Friendship buildedFriendship = new Friendship();
+		
+		buildedFriendship.setFriendOf(accountService.getAccount(friendshipDto.getMyAccountId()));
+		buildedFriendship.setFriendWith(accountService.getAccountByEmail(friendshipDto.getFriendEmail()));
+		
+		return buildedFriendship;
 	}
+	
+	public FriendshipDTO convertFriendshipFormToFriendshipDto(FriendshipForm friendshipForm) {
+		
+		FriendshipDTO friendshipDto = new FriendshipDTO();
+		
+		friendshipDto.setMyAccountId(friendshipForm.getMyAccountId());
+		friendshipDto.setFriendEmail(friendshipForm.getFriendEmail());
+		
+		return friendshipDto;
+	}
+	
 }
