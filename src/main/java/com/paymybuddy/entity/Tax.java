@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.sun.istack.NotNull;
+
 @Entity
 @Table(name = "TAX")
 public class Tax {
@@ -16,9 +18,11 @@ public class Tax {
 	@Column(name = "TAX_ID")
 	private int taxId;
 
+	@NotNull
 	@Column(name = "TAX_RATE", length = 4, nullable = false)
 	private double taxRate;
 
+	@NotNull
 	@Column(name = "TAX_DESCRIPTION", length = 25, nullable = false)
 	private String taxDescription;
 

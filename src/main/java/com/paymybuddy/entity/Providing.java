@@ -12,6 +12,8 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.sun.istack.NotNull;
+
 @Entity
 @Table(name = "PROVIDING")
 @IdClass(ProvidingPK.class)
@@ -37,12 +39,12 @@ public class Providing {
 	@JoinColumn(name = "PROVIDING_OPERATION_ID", referencedColumnName = "OPERATION_ID")
 	private Operation providingOperationId;
 
+	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "PROVIDING_TYPE", length = 20, nullable = false)
 	private ProvidingType providingType;
 
 	public Providing() {
-
 	}
 
 	public Providing(Account holderAccountId, BankAccount bankAccountId, Operation providingOperationId,

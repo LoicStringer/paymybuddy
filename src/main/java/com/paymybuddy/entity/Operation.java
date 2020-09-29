@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.sun.istack.NotNull;
+
 @Entity
 @Table(name = "OPERATION")
 public class Operation {
@@ -20,17 +22,21 @@ public class Operation {
 	@Column(name = "OPERATION_ID")
 	private long operationId;
 
-	@Column(name = "OPERATION_DATE",nullable = false)
+	@NotNull	
+	@Column(name = "OPERATION_DATE", nullable = false)
 	private Instant operationDate;
 
+	@NotNull
 	@Column(name = "OPERATION_AMOUNT", nullable = false)
 	private double operationAmount;
 
+	@NotNull
 	@Column(name = "OPERATION_FEE", nullable = false)
 	private double operationFee;
 
 	@OneToOne
-	@JoinColumn(name = "OPERATION_TAX_ID", referencedColumnName = "TAX_ID",nullable = false)
+	@NotNull
+	@JoinColumn(name = "OPERATION_TAX_ID", referencedColumnName = "TAX_ID", nullable = false)
 	private Tax operationTax;
 
 	public Operation() {

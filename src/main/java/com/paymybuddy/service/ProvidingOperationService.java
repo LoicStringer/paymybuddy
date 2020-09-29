@@ -7,12 +7,15 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.paymybuddy.dto.ProvidingOperationDTO;
 import com.paymybuddy.entity.Operation;
 import com.paymybuddy.entity.Providing;
 import com.paymybuddy.entity.Providing.ProvidingType;
 import com.paymybuddy.entity.Tax;
+import com.paymybuddy.exception.BankProcessFailedException;
+import com.paymybuddy.exception.InsufficientBalanceException;
+import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.ProvidingOperationForm;
-import com.paymybuddy.model.ProvidingOperation;
 import com.paymybuddy.responseentity.ProvidingOperationResponse;
 
 @Service
@@ -28,59 +31,76 @@ public class ProvidingOperationService {
 
 	@Autowired
 	private BankAccountService bankAccountService;
-	
+
 	@Autowired
 	private ProvidingService providingService;
 
-	@Transactional
-	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationForm providingOperationForm) {
-		
+	@Transactional(rollbackOn = {Exception.class})
+	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationDTO providingOperationDto) throws InsufficientBalanceException, BankProcessFailedException, ResourceNotFoundException {
+
 		ProvidingOperationResponse providingOperationCompletedInfo = new ProvidingOperationResponse();
-		boolean success = bankAccountService.askAuthorisationToTheBank();
 		
-		if(success!=true) {
-			providingOperationCompletedInfo.setMessage("Providing operation has failed");
-			//throw exception
-		}
-			
-		ProvidingOperation providingOperationInProgress = buildProvidingOperation(providingOperationForm);
-		System.out.println(providingOperationInProgress.getProviding().getProvidingType());
-		switch(providingOperationInProgress.getProviding().getProvidingType()) {
-			case ACCOUNTTOBANKACCOUNT : accountService.addMoneyToAccount(providingOperationInProgress.getProviding().getHolderAccountId(), 
-				- providingOperationInProgress.getOperation().getOperationAmount());
-										break;
-			case BANKACCOUNTTOACCOUNT : accountService.addMoneyToAccount(providingOperationInProgress.getProviding().getHolderAccountId(),
-				providingOperationInProgress.getOperation().getOperationAmount());
-										break;
-		}
+		Operation operationInProgress = buildOperationInProgressFromProvidingOperatioDto(providingOperationDto);
+		Providing providingInProgress = buildProvidingInProgressFromProvidingOperatioDto(providingOperationDto);
 		
-		providingService.saveProviding(providingOperationInProgress.getProviding());
+		switch (providingInProgress.getProvidingType()) {
+		case ACCOUNTTOBANKACCOUNT:
+			bankAccountService.bankAccountDepositProcess();
+			accountService.addMoneyToAccount(providingInProgress.getHolderAccountId(),
+					-operationInProgress.getOperationAmount());
+			break;
+		case BANKACCOUNTTOACCOUNT:
+			bankAccountService.bankAccountWithdrawProcess();
+			accountService.addMoneyToAccount(providingInProgress.getHolderAccountId(),
+					operationInProgress.getOperationAmount());
+			break;
+		}
+		providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
+		providingService.saveProviding(providingInProgress);
+		
 		providingOperationCompletedInfo.setMessage("Providing operation has succed");
-		
+		providingOperationCompletedInfo.setProvidingOperationDto(providingOperationDto);
+
 		return providingOperationCompletedInfo;
 	}
 
-	private ProvidingOperation buildProvidingOperation(ProvidingOperationForm providingOperationForm) {
+	public ProvidingOperationDTO convertProvidingFormToProvidingOperationDto(
+			ProvidingOperationForm providingOperationForm) {
 
-		Tax taxApplied = taxService.getTax(providingOperationForm.getTaxApplied());
+		ProvidingOperationDTO providingOperationInProgress = new ProvidingOperationDTO();
+
+		providingOperationInProgress.setAccountId(providingOperationForm.getAccountId());
+		providingOperationInProgress.setBankAccountId(providingOperationForm.getBankAccountId());
+		providingOperationInProgress.setAmount(providingOperationForm.getAmount());
+		providingOperationInProgress.setProvidingType(providingOperationForm.getProvidingType());
+		providingOperationInProgress.setTaxApplied(providingOperationForm.getTaxApplied());
+
+		return providingOperationInProgress;
+	}
+
+	private Operation buildOperationInProgressFromProvidingOperatioDto(ProvidingOperationDTO providingOperationDto) {
+
+		Tax taxApplied = taxService.getTax(providingOperationDto.getTaxApplied());
 
 		Operation buildedOperation = new Operation();
-		buildedOperation.setOperationAmount(providingOperationForm.getAmount());
+		buildedOperation.setOperationAmount(providingOperationDto.getAmount());
 		buildedOperation.setOperationDate(Instant.now());
-		buildedOperation.setOperationFee(
-				operationService.calculateOperationFee(taxApplied, providingOperationForm.getAmount()));
+		buildedOperation
+				.setOperationFee(operationService.calculateOperationFee(taxApplied, providingOperationDto.getAmount()));
 		buildedOperation.setOperationTax(taxApplied);
-		buildedOperation = operationService.saveOperation(buildedOperation);
+
+		return buildedOperation;
+	}
+
+	private Providing buildProvidingInProgressFromProvidingOperatioDto(ProvidingOperationDTO providingOperationDto) throws ResourceNotFoundException {
 
 		Providing buildedProviding = new Providing();
-		buildedProviding.setHolderAccountId(accountService.getAccount(providingOperationForm.getAccountId()));
-		buildedProviding.setBankAccountId(bankAccountService.getBankAccount(providingOperationForm.getBankAccountId()));
-		buildedProviding.setProvidingOperationId(buildedOperation);
-		buildedProviding.setProvidingType(ProvidingType.valueOf(providingOperationForm.getProvidingType()));
 
-		ProvidingOperation buildedProvidingOperation = new ProvidingOperation(buildedProviding, buildedOperation);
+		buildedProviding.setHolderAccountId(accountService.getAccount(providingOperationDto.getAccountId()));
+		buildedProviding.setBankAccountId(bankAccountService.getBankAccount(providingOperationDto.getBankAccountId()));
+		buildedProviding.setProvidingType(ProvidingType.valueOf(providingOperationDto.getProvidingType()));
 
-		return buildedProvidingOperation;
+		return buildedProviding;
 	}
 
 }
