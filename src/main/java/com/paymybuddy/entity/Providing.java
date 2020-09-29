@@ -41,7 +41,7 @@ public class Providing {
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	@Column(name = "PROVIDING_TYPE", length = 20)
+	@Column(name = "PROVIDING_TYPE", length = 20, nullable = false)
 	private ProvidingType providingType;
 
 	public Providing() {

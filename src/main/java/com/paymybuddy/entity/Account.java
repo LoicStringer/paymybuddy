@@ -23,15 +23,15 @@ public class Account {
 	private long accountId;
 
 	@NotNull
-	@Column(name = "ACCOUNT_NAME", length = 20)
+	@Column(name = "ACCOUNT_NAME", length = 20, nullable = false)
 	private String accountUserName;
 
 	@NotNull
-	@Column(name = "ACCOUNT_EMAIL", length = 50, unique = true)
+	@Column(name = "ACCOUNT_EMAIL", length = 50, unique = true, nullable = false)
 	private String accountUserEmail;
 
 	@NotNull
-	@Column(name = "ACCOUNT_PASSWORD", length = 20)
+	@Column(name = "ACCOUNT_PASSWORD", length = 20, nullable = false)
 	private String accountUserPassword;
 
 	@Column(name = "ACCOUNT_BALANCE", columnDefinition = " double default 0")

@@ -23,20 +23,20 @@ public class Operation {
 	private long operationId;
 
 	@NotNull	
-	@Column(name = "OPERATION_DATE")
+	@Column(name = "OPERATION_DATE", nullable = false)
 	private Instant operationDate;
 
 	@NotNull
-	@Column(name = "OPERATION_AMOUNT")
+	@Column(name = "OPERATION_AMOUNT", nullable = false)
 	private double operationAmount;
 
 	@NotNull
-	@Column(name = "OPERATION_FEE")
+	@Column(name = "OPERATION_FEE", nullable = false)
 	private double operationFee;
 
 	@OneToOne
 	@NotNull
-	@JoinColumn(name = "OPERATION_TAX_ID", referencedColumnName = "TAX_ID")
+	@JoinColumn(name = "OPERATION_TAX_ID", referencedColumnName = "TAX_ID", nullable = false)
 	private Tax operationTax;
 
 	public Operation() {

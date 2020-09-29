@@ -35,15 +35,14 @@ public class ProvidingOperationService {
 	@Autowired
 	private ProvidingService providingService;
 
-	@Transactional(rollbackOn = Exception.class)
+	@Transactional(rollbackOn = {Exception.class})
 	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationDTO providingOperationDto) throws InsufficientBalanceException, BankProcessFailedException, ResourceNotFoundException {
 
 		ProvidingOperationResponse providingOperationCompletedInfo = new ProvidingOperationResponse();
 		
 		Operation operationInProgress = buildOperationInProgressFromProvidingOperatioDto(providingOperationDto);
 		Providing providingInProgress = buildProvidingInProgressFromProvidingOperatioDto(providingOperationDto);
-		providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
-
+		
 		switch (providingInProgress.getProvidingType()) {
 		case ACCOUNTTOBANKACCOUNT:
 			bankAccountService.bankAccountDepositProcess();
@@ -56,7 +55,7 @@ public class ProvidingOperationService {
 					operationInProgress.getOperationAmount());
 			break;
 		}
-
+		providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
 		providingService.saveProviding(providingInProgress);
 		
 		providingOperationCompletedInfo.setMessage("Providing operation has succed");

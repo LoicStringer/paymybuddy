@@ -2,10 +2,6 @@ package com.paymybuddy.dto;
 
 import org.springframework.stereotype.Component;
 
-import com.paymybuddy.entity.Operation;
-import com.paymybuddy.entity.Tax;
-import com.paymybuddy.entity.Transfer;
-
 @Component
 public class TransferOperationDTO {
 

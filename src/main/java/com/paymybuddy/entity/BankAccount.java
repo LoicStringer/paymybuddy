@@ -25,11 +25,11 @@ public class BankAccount {
 	private long bankAccountId;
 
 	@NotNull
-	@Column(name = "BANK_ACCOUNT_IBAN", length = 35, unique = true)
+	@Column(name = "BANK_ACCOUNT_IBAN", length = 35, unique = true, nullable = false)
 	private String bankAccountIban;
 
 	@NotNull
-	@Column(name = "BANK_ACCOUNT_HOLDER_NAME", length = 30)
+	@Column(name = "BANK_ACCOUNT_HOLDER_NAME", length = 30, nullable = false)
 	private String bankAccountHolderName;
 
 	@Column(name = "BANK_ACCOUNT_DESCRIPTION", length = 20)

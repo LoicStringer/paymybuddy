@@ -61,6 +61,7 @@ public class BankAccountService {
 	public void bankAccountWithdrawProcess() throws BankProcessFailedException {
 		boolean success = false;
 		//TODO linked method to online payment
+		success = true;
 		if(success!=true)
 			throw new BankProcessFailedException("Authorization denied");
 	}
@@ -68,6 +69,7 @@ public class BankAccountService {
 	public void bankAccountDepositProcess () throws BankProcessFailedException {
 		boolean success = false;
 		//TODO linked method to online payment
+		success = true;
 		if(success!=true)
 			throw new BankProcessFailedException("Bank process failed");
 	}

@@ -42,10 +42,10 @@ public class TransferOperationService {
 		Operation operationInProgress = buildOperationFromTransferOperationDto(transferOperationDto);
 		Transfer transferInProgress = buildTransferFromTransferOperationDto(transferOperationDto);
 		
-		transferInProgress.setTransferOperationId(operationService.saveOperation(operationInProgress));
-		
 		accountService.addMoneyToAccount(transferInProgress.getAccountFrom(), - operationInProgress.getOperationAmount());
 		accountService.addMoneyToAccount(transferInProgress.getAccountTo(), operationInProgress.getOperationAmount());
+		
+		transferInProgress.setTransferOperationId(operationService.saveOperation(operationInProgress));
 		transferService.saveTransfer(transferInProgress);
 		
 		transferOperationCompletedInfo.setMessage("Transfer operation has succeed.");

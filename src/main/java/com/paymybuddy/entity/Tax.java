@@ -19,11 +19,11 @@ public class Tax {
 	private int taxId;
 
 	@NotNull
-	@Column(name = "TAX_RATE", length = 4)
+	@Column(name = "TAX_RATE", length = 4, nullable = false)
 	private double taxRate;
 
 	@NotNull
-	@Column(name = "TAX_DESCRIPTION", length = 25)
+	@Column(name = "TAX_DESCRIPTION", length = 25, nullable = false)
 	private String taxDescription;
 
 	public Tax() {
