@@ -11,15 +11,24 @@ public class FriendshipPK implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private long myAccount ;
 	private long friendWith;
-	private long friendOf;
 
 	public FriendshipPK() {
 	}
 
-	public FriendshipPK(long friendWith, long friendOf) {
+	public FriendshipPK(long myAccount, long friendWith) {
+		super();
+		this.myAccount = myAccount;
 		this.friendWith = friendWith;
-		this.friendOf = friendOf;
+	}
+
+	public long getMyAccount() {
+		return myAccount;
+	}
+
+	public void setMyAccount(long myAccount) {
+		this.myAccount = myAccount;
 	}
 
 	public long getFriendWith() {
@@ -30,20 +39,16 @@ public class FriendshipPK implements Serializable {
 		this.friendWith = friendWith;
 	}
 
-	public long getFriendOf() {
-		return friendOf;
-	}
-
-	public void setFriendOf(long friendOf) {
-		this.friendOf = friendOf;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (friendOf ^ (friendOf >>> 32));
 		result = prime * result + (int) (friendWith ^ (friendWith >>> 32));
+		result = prime * result + (int) (myAccount ^ (myAccount >>> 32));
 		return result;
 	}
 
@@ -56,9 +61,9 @@ public class FriendshipPK implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		FriendshipPK other = (FriendshipPK) obj;
-		if (friendOf != other.friendOf)
-			return false;
 		if (friendWith != other.friendWith)
+			return false;
+		if (myAccount != other.myAccount)
 			return false;
 		return true;
 	}

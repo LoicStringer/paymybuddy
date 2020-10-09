@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.paymybuddy.exception.BankProcessFailedException;
 import com.paymybuddy.exception.InsufficientBalanceException;
+import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.exception.UniqueConstraintViolationException;
 import com.paymybuddy.responseentity.ExceptionResponse;
@@ -29,6 +30,14 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler(InsufficientBalanceException.class)
 	public ResponseEntity<ExceptionResponse> handleInvalidParameterException(InsufficientBalanceException ex) {
+
+		ExceptionResponse exceptionResponse = exceptionResponseBuild(ex);
+
+		return new ResponseEntity<ExceptionResponse>(exceptionResponse, getHttpStatusFromException(ex));
+	}
+	
+	@ExceptionHandler(NegativeAmountException.class)
+	public ResponseEntity<ExceptionResponse> handleInvalidParameterException(NegativeAmountException ex) {
 
 		ExceptionResponse exceptionResponse = exceptionResponseBuild(ex);
 

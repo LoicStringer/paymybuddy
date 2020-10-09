@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 
 import com.sun.istack.NotNull;
 
@@ -28,6 +29,7 @@ public class Operation {
 
 	@NotNull
 	@Column(name = "OPERATION_AMOUNT", nullable = false)
+	@Min(value= 0)
 	private double operationAmount;
 
 	@NotNull

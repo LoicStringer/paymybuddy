@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.paymybuddy.dao.AccountDAO;
 import com.paymybuddy.entity.Account;
 import com.paymybuddy.exception.InsufficientBalanceException;
+import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.exception.UniqueConstraintViolationException;
 
@@ -27,18 +28,34 @@ public class AccountService {
 		checkForEmailUnicity(createdAccount.getAccountUserEmail());
 		return accountDao.save(createdAccount);
 	}
+	
+	public Account updateAccount(Account account) {
+		return accountDao.save(account);
+	}
 
-	public Account addMoneyToAccount(Account account, double amount) throws InsufficientBalanceException {
-		if(account.getAccountBalance()<=0|amount>account.getAccountBalance())
-			throw new InsufficientBalanceException("Insufficient balance");
+	public void addMoneyToAccount(Account account, double amount) throws NegativeAmountException {
+		checkForNegativeAmount(amount);
 		double newBalance = account.getAccountBalance()+amount;
 		account.setAccountBalance(newBalance);
-		return accountDao.save(account);
+	}
+	
+	public void removeMoneyFromAccount(Account account, double amount) throws InsufficientBalanceException, NegativeAmountException {
+		checkForNegativeAmount(amount);
+		if(account.getAccountBalance()<=0|amount>account.getAccountBalance())
+			throw new InsufficientBalanceException("Insufficient balance");
+		
+		double newBalance = account.getAccountBalance()-amount;
+		account.setAccountBalance(newBalance);
 	}
 	
 	private void checkForEmailUnicity(String email) throws UniqueConstraintViolationException {
 		Account accountToCheck = accountDao.findByAccountUserEmailEquals(email).orElse(null);
 		if(accountToCheck != null)
 			throw new UniqueConstraintViolationException("This email already exists.");
+	}
+
+	private void checkForNegativeAmount(double amount) throws NegativeAmountException {
+		if(amount<0)
+			throw new NegativeAmountException("Amount can't be negative!");
 	}
 }

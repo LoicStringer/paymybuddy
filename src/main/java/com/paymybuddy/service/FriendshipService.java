@@ -1,10 +1,13 @@
 package com.paymybuddy.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.paymybuddy.dao.FriendshipDAO;
 import com.paymybuddy.dto.FriendshipDTO;
+import com.paymybuddy.entity.Account;
 import com.paymybuddy.entity.Friendship;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.FriendshipForm;
@@ -22,11 +25,18 @@ public class FriendshipService {
 		return friendshipDao.save(friendshipToAdd);
 	}
 	
+	public List<Friendship> getMyFriends(Account myAccount){
+		
+		List<Friendship> myFriends = friendshipDao.findByMyAccount(myAccount);
+		
+		return myFriends;
+	}
+	
 	public Friendship buildFriendship (FriendshipDTO friendshipDto) throws ResourceNotFoundException {
 		
 		Friendship buildedFriendship = new Friendship();
 		
-		buildedFriendship.setFriendOf(accountService.getAccount(friendshipDto.getMyAccountId()));
+		buildedFriendship.setMyAccount(accountService.getAccount(friendshipDto.getMyAccountId()));
 		buildedFriendship.setFriendWith(accountService.getAccountByEmail(friendshipDto.getFriendEmail()));
 		
 		return buildedFriendship;

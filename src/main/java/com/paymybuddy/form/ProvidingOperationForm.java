@@ -1,5 +1,7 @@
 package com.paymybuddy.form;
 
+import javax.validation.constraints.Min;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -7,7 +9,10 @@ public class ProvidingOperationForm {
 
 	private long accountId;
 	private long bankAccountId;
+	
+	@Min(value=0, message="Amount can't be negative !")
 	private double amount;
+	
 	private int taxApplied;
 	private String providingType;
 	

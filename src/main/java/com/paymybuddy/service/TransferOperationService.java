@@ -14,6 +14,7 @@ import com.paymybuddy.entity.Operation;
 import com.paymybuddy.entity.Tax;
 import com.paymybuddy.entity.Transfer;
 import com.paymybuddy.exception.InsufficientBalanceException;
+import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.TransferOperationForm;
 import com.paymybuddy.responseentity.TransferOperationResponse;
@@ -35,19 +36,20 @@ public class TransferOperationService {
 	
 	
 	@Transactional(rollbackOn = Exception.class)
-	public TransferOperationResponse processTransferOperation (TransferOperationDTO transferOperationDto) throws InsufficientBalanceException, ResourceNotFoundException {
-		
-		TransferOperationResponse transferOperationCompletedInfo = new TransferOperationResponse();
+	public TransferOperationResponse processTransferOperation (TransferOperationDTO transferOperationDto) throws InsufficientBalanceException, ResourceNotFoundException, NegativeAmountException {
 					
 		Operation operationInProgress = buildOperationFromTransferOperationDto(transferOperationDto);
 		Transfer transferInProgress = buildTransferFromTransferOperationDto(transferOperationDto);
-		
-		accountService.addMoneyToAccount(transferInProgress.getAccountFrom(), - operationInProgress.getOperationAmount());
+	
+		accountService.removeMoneyFromAccount(transferInProgress.getAccountFrom(), operationInProgress.getOperationAmount());
 		accountService.addMoneyToAccount(transferInProgress.getAccountTo(), operationInProgress.getOperationAmount());
+		accountService.updateAccount(transferInProgress.getAccountFrom());
+		accountService.updateAccount(transferInProgress.getAccountTo());
 		
 		transferInProgress.setTransferOperationId(operationService.saveOperation(operationInProgress));
 		transferService.saveTransfer(transferInProgress);
 		
+		TransferOperationResponse transferOperationCompletedInfo = new TransferOperationResponse();
 		transferOperationCompletedInfo.setMessage("Transfer operation has succeed.");
 		transferOperationCompletedInfo.setTransferOperationDto(transferOperationDto);
 		
@@ -77,7 +79,7 @@ public class TransferOperationService {
 		return buildedTransfer;
 	}
 		
-	private Operation buildOperationFromTransferOperationDto(TransferOperationDTO transferOperationDTO) {
+	private Operation buildOperationFromTransferOperationDto(TransferOperationDTO transferOperationDTO) throws NegativeAmountException {
 		
 		Tax taxApplied = taxService.getTax(transferOperationDTO.getTaxApplied());
 		Operation buildedOperation = new Operation();
