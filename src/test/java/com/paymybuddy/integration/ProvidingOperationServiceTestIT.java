@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.paymybuddy.dto.ProvidingOperationDTO;
 import com.paymybuddy.entity.Providing;
@@ -25,7 +26,7 @@ import com.paymybuddy.service.ProvidingService;
 
 @ActiveProfiles("test")
 @SpringBootTest
-//@Transactional
+@Transactional
 class ProvidingOperationServiceTestIT {
 
 	@Autowired 
