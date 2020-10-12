@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -24,7 +25,7 @@ public class Providing {
 	}
 
 	@Id
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ACCOUNT_ID")
 	private Account holderAccountId;
 
@@ -128,4 +129,11 @@ public class Providing {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Providing [holderAccountId=" + holderAccountId + ", bankAccountId=" + bankAccountId
+				+ ", providingOperationId=" + providingOperationId + ", providingType=" + providingType + "]";
+	}
+
+	
 }

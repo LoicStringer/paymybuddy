@@ -14,12 +14,14 @@ import com.paymybuddy.entity.Providing.ProvidingType;
 import com.paymybuddy.entity.Tax;
 import com.paymybuddy.exception.BankProcessFailedException;
 import com.paymybuddy.exception.InsufficientBalanceException;
+import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.ProvidingOperationForm;
 import com.paymybuddy.responseentity.ProvidingOperationResponse;
 
 @Service
 public class ProvidingOperationService {
+	
 	@Autowired
 	private AccountService accountService;
 
@@ -35,8 +37,8 @@ public class ProvidingOperationService {
 	@Autowired
 	private ProvidingService providingService;
 
-	@Transactional(rollbackOn = {Exception.class})
-	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationDTO providingOperationDto) throws InsufficientBalanceException, BankProcessFailedException, ResourceNotFoundException {
+	@Transactional(rollbackOn = Exception.class)
+	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationDTO providingOperationDto) throws InsufficientBalanceException, BankProcessFailedException, ResourceNotFoundException, NegativeAmountException {
 
 		ProvidingOperationResponse providingOperationCompletedInfo = new ProvidingOperationResponse();
 		
@@ -46,17 +48,22 @@ public class ProvidingOperationService {
 		switch (providingInProgress.getProvidingType()) {
 		case ACCOUNTTOBANKACCOUNT:
 			bankAccountService.bankAccountDepositProcess();
-			accountService.addMoneyToAccount(providingInProgress.getHolderAccountId(),
-					-operationInProgress.getOperationAmount());
+			accountService.removeMoneyFromAccount(providingInProgress.getHolderAccountId(),
+					operationInProgress.getOperationAmount());
+			accountService.updateAccount(providingInProgress.getHolderAccountId());
+			providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
+			providingService.saveProviding(providingInProgress);
 			break;
+			
 		case BANKACCOUNTTOACCOUNT:
 			bankAccountService.bankAccountWithdrawProcess();
 			accountService.addMoneyToAccount(providingInProgress.getHolderAccountId(),
 					operationInProgress.getOperationAmount());
+			accountService.updateAccount(providingInProgress.getHolderAccountId());
+			providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
+			providingService.saveProviding(providingInProgress);
 			break;
 		}
-		providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
-		providingService.saveProviding(providingInProgress);
 		
 		providingOperationCompletedInfo.setMessage("Providing operation has succed");
 		providingOperationCompletedInfo.setProvidingOperationDto(providingOperationDto);
@@ -78,7 +85,7 @@ public class ProvidingOperationService {
 		return providingOperationInProgress;
 	}
 
-	private Operation buildOperationInProgressFromProvidingOperatioDto(ProvidingOperationDTO providingOperationDto) {
+	private Operation buildOperationInProgressFromProvidingOperatioDto(ProvidingOperationDTO providingOperationDto) throws NegativeAmountException, ResourceNotFoundException {
 
 		Tax taxApplied = taxService.getTax(providingOperationDto.getTaxApplied());
 

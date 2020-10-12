@@ -1,18 +1,21 @@
 package com.paymybuddy.form;
 
+import javax.validation.constraints.Email;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class FriendshipForm {
 
 	private long myAccountId;
+	
+	@Email(message="Invalid email")
 	private String friendEmail;
 	
 	public FriendshipForm() {
 	}
 
 	public FriendshipForm(long myAccountId, String friendEmail) {
-		super();
 		this.myAccountId = myAccountId;
 		this.friendEmail = friendEmail;
 	}

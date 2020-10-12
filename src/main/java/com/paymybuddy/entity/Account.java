@@ -2,13 +2,16 @@ package com.paymybuddy.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
@@ -28,6 +31,7 @@ public class Account {
 
 	@NotNull
 	@Column(name = "ACCOUNT_EMAIL", length = 50, unique = true, nullable = false)
+	@Email(message="Invalid email")
 	private String accountUserEmail;
 
 	@NotNull
@@ -38,10 +42,6 @@ public class Account {
 	private double accountBalance;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "accountFrom")
-	private List<Transfer> transfersFrom;
-
-	@JsonIgnore
 	@OneToMany(mappedBy = "accountTo")
 	private List<Transfer> transfersTo;
 
@@ -49,14 +49,12 @@ public class Account {
 	@OneToMany(mappedBy = "friendWith")
 	private List<Friendship> friendWith;
 
+	/*
 	@JsonIgnore
-	@OneToMany(mappedBy = "friendOf")
-	private List<Friendship> friendOf;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "holderAccountId")
+	@OneToMany
 	private List<Providing> providingsToBankAccount;
-
+	*/ 
+	
 	@JsonIgnore
 	@OneToMany(mappedBy = "accountHolderId")
 	private List<BankAccount> ownedBankAccounts;
@@ -65,20 +63,17 @@ public class Account {
 	}
 
 	public Account(long accountId, String accountUserName, String accountUserEmail, String accountUserPassword,
-			double accountBalance, List<Transfer> transfersFrom, List<Transfer> transfersTo,
-			List<Friendship> friendWith, List<Friendship> friendOf, List<Providing> providingsToBankAccount,
-			List<BankAccount> ownedBankAccounts) {
+			double accountBalance, List<Transfer> transfersTo, List<Friendship> friendWith,
+			List<Providing> providingsToBankAccount, List<BankAccount> ownedBankAccounts) {
 		super();
 		this.accountId = accountId;
 		this.accountUserName = accountUserName;
 		this.accountUserEmail = accountUserEmail;
 		this.accountUserPassword = accountUserPassword;
 		this.accountBalance = accountBalance;
-		this.transfersFrom = transfersFrom;
 		this.transfersTo = transfersTo;
 		this.friendWith = friendWith;
-		this.friendOf = friendOf;
-		this.providingsToBankAccount = providingsToBankAccount;
+		//this.providingsToBankAccount = providingsToBankAccount;
 		this.ownedBankAccounts = ownedBankAccounts;
 	}
 
@@ -122,14 +117,6 @@ public class Account {
 		this.accountBalance = accountBalance;
 	}
 
-	public List<Transfer> getTransfersFrom() {
-		return transfersFrom;
-	}
-
-	public void setTransfersFrom(List<Transfer> transfersFrom) {
-		this.transfersFrom = transfersFrom;
-	}
-
 	public List<Transfer> getTransfersTo() {
 		return transfersTo;
 	}
@@ -145,15 +132,7 @@ public class Account {
 	public void setFriendWith(List<Friendship> friendWith) {
 		this.friendWith = friendWith;
 	}
-
-	public List<Friendship> getFriendOf() {
-		return friendOf;
-	}
-
-	public void setFriendOf(List<Friendship> friendOf) {
-		this.friendOf = friendOf;
-	}
-
+/*
 	public List<Providing> getProvidingsToBankAccount() {
 		return providingsToBankAccount;
 	}
@@ -161,7 +140,7 @@ public class Account {
 	public void setProvidingsToBankAccount(List<Providing> providingsToBankAccount) {
 		this.providingsToBankAccount = providingsToBankAccount;
 	}
-
+*/
 	public List<BankAccount> getOwnedBankAccounts() {
 		return ownedBankAccounts;
 	}
@@ -181,11 +160,9 @@ public class Account {
 		result = prime * result + ((accountUserEmail == null) ? 0 : accountUserEmail.hashCode());
 		result = prime * result + ((accountUserName == null) ? 0 : accountUserName.hashCode());
 		result = prime * result + ((accountUserPassword == null) ? 0 : accountUserPassword.hashCode());
-		result = prime * result + ((friendOf == null) ? 0 : friendOf.hashCode());
 		result = prime * result + ((friendWith == null) ? 0 : friendWith.hashCode());
 		result = prime * result + ((ownedBankAccounts == null) ? 0 : ownedBankAccounts.hashCode());
-		result = prime * result + ((providingsToBankAccount == null) ? 0 : providingsToBankAccount.hashCode());
-		result = prime * result + ((transfersFrom == null) ? 0 : transfersFrom.hashCode());
+		//result = prime * result + ((providingsToBankAccount == null) ? 0 : providingsToBankAccount.hashCode());
 		result = prime * result + ((transfersTo == null) ? 0 : transfersTo.hashCode());
 		return result;
 	}
@@ -218,11 +195,6 @@ public class Account {
 				return false;
 		} else if (!accountUserPassword.equals(other.accountUserPassword))
 			return false;
-		if (friendOf == null) {
-			if (other.friendOf != null)
-				return false;
-		} else if (!friendOf.equals(other.friendOf))
-			return false;
 		if (friendWith == null) {
 			if (other.friendWith != null)
 				return false;
@@ -233,16 +205,13 @@ public class Account {
 				return false;
 		} else if (!ownedBankAccounts.equals(other.ownedBankAccounts))
 			return false;
+		/*
 		if (providingsToBankAccount == null) {
 			if (other.providingsToBankAccount != null)
 				return false;
 		} else if (!providingsToBankAccount.equals(other.providingsToBankAccount))
 			return false;
-		if (transfersFrom == null) {
-			if (other.transfersFrom != null)
-				return false;
-		} else if (!transfersFrom.equals(other.transfersFrom))
-			return false;
+			*/
 		if (transfersTo == null) {
 			if (other.transfersTo != null)
 				return false;
@@ -250,6 +219,17 @@ public class Account {
 			return false;
 		return true;
 	}
-
+/*
+	@Override
+	public String toString() {
+		return "Account [accountId=" + accountId + ", accountUserName=" + accountUserName + ", accountUserEmail="
+				+ accountUserEmail + ", accountUserPassword=" + accountUserPassword + ", accountBalance="
+				+ accountBalance + ", transfersTo=" + transfersTo + ", friendWith=" + friendWith
+				+ ", providingsToBankAccount=" + providingsToBankAccount + ", ownedBankAccounts=" + ownedBankAccounts
+				+ "]";
+	}
+*/
+	
+	
 	
 }

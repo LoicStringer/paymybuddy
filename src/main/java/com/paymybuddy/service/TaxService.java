@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.paymybuddy.dao.TaxDAO;
 import com.paymybuddy.entity.Tax;
+import com.paymybuddy.exception.ResourceNotFoundException;
 
 @Service
 public class TaxService {
@@ -16,7 +17,7 @@ public class TaxService {
 		return taxDao.save(taxToAdd);
 	}
 
-	public Tax getTax(int taxId) {
-		return taxDao.findById(taxId).orElseThrow();
+	public Tax getTax(int taxId) throws ResourceNotFoundException {
+		return taxDao.findById(taxId).orElseThrow(()-> new ResourceNotFoundException("Unknown tax."));
 	}
 }
