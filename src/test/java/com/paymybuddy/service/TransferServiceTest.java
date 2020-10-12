@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,12 +41,23 @@ class TransferServiceTest {
 	}
 	
 	@Test
+	void getTransfersByAccountTest() {
+		
+		List<Transfer> transfers = new ArrayList<Transfer>();
+		transfers.add(transfer);
+		
+		when(transferDao.findByAccountFrom(account)).thenReturn(transfers);
+		
+		assertEquals(transferService.getTransfersByAccount(account).get(0),transfer);
+	}
+	
+	
+	@Test
 	void saveTransferTest() {
 		
 		when(transferDao.save(any(Transfer.class))).thenReturn(transfer);
 		
 		assertEquals(transferService.saveTransfer(transfer).getAccountFrom(), account);
-		
 	}
 
 }

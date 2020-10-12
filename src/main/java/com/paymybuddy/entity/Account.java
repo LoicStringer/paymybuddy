@@ -2,8 +2,10 @@ package com.paymybuddy.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,9 +49,11 @@ public class Account {
 	@OneToMany(mappedBy = "friendWith")
 	private List<Friendship> friendWith;
 
+	/*
 	@JsonIgnore
-	@OneToMany(mappedBy = "holderAccountId")
+	@OneToMany
 	private List<Providing> providingsToBankAccount;
+	*/ 
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "accountHolderId")
@@ -69,7 +73,7 @@ public class Account {
 		this.accountBalance = accountBalance;
 		this.transfersTo = transfersTo;
 		this.friendWith = friendWith;
-		this.providingsToBankAccount = providingsToBankAccount;
+		//this.providingsToBankAccount = providingsToBankAccount;
 		this.ownedBankAccounts = ownedBankAccounts;
 	}
 
@@ -128,7 +132,7 @@ public class Account {
 	public void setFriendWith(List<Friendship> friendWith) {
 		this.friendWith = friendWith;
 	}
-
+/*
 	public List<Providing> getProvidingsToBankAccount() {
 		return providingsToBankAccount;
 	}
@@ -136,7 +140,7 @@ public class Account {
 	public void setProvidingsToBankAccount(List<Providing> providingsToBankAccount) {
 		this.providingsToBankAccount = providingsToBankAccount;
 	}
-
+*/
 	public List<BankAccount> getOwnedBankAccounts() {
 		return ownedBankAccounts;
 	}
@@ -158,7 +162,7 @@ public class Account {
 		result = prime * result + ((accountUserPassword == null) ? 0 : accountUserPassword.hashCode());
 		result = prime * result + ((friendWith == null) ? 0 : friendWith.hashCode());
 		result = prime * result + ((ownedBankAccounts == null) ? 0 : ownedBankAccounts.hashCode());
-		result = prime * result + ((providingsToBankAccount == null) ? 0 : providingsToBankAccount.hashCode());
+		//result = prime * result + ((providingsToBankAccount == null) ? 0 : providingsToBankAccount.hashCode());
 		result = prime * result + ((transfersTo == null) ? 0 : transfersTo.hashCode());
 		return result;
 	}
@@ -201,11 +205,13 @@ public class Account {
 				return false;
 		} else if (!ownedBankAccounts.equals(other.ownedBankAccounts))
 			return false;
+		/*
 		if (providingsToBankAccount == null) {
 			if (other.providingsToBankAccount != null)
 				return false;
 		} else if (!providingsToBankAccount.equals(other.providingsToBankAccount))
 			return false;
+			*/
 		if (transfersTo == null) {
 			if (other.transfersTo != null)
 				return false;
@@ -213,7 +219,17 @@ public class Account {
 			return false;
 		return true;
 	}
-
+/*
+	@Override
+	public String toString() {
+		return "Account [accountId=" + accountId + ", accountUserName=" + accountUserName + ", accountUserEmail="
+				+ accountUserEmail + ", accountUserPassword=" + accountUserPassword + ", accountBalance="
+				+ accountBalance + ", transfersTo=" + transfersTo + ", friendWith=" + friendWith
+				+ ", providingsToBankAccount=" + providingsToBankAccount + ", ownedBankAccounts=" + ownedBankAccounts
+				+ "]";
+	}
+*/
+	
 	
 	
 }

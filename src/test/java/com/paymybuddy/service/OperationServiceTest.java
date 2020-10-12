@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,14 @@ class OperationServiceTest {
 		operation.setOperationId(1);
 		operation.setOperationDate(Instant.now());
 		operation.setOperationAmount(500);
+	}
+	
+	@Test
+	void getOperationTest() {
+		
+		when(operationDao.findById((long) 1)).thenReturn(Optional.of(operation));
+		
+		assertEquals(operationService.getOperation(1),operation);
 	}
 	
 	@Test

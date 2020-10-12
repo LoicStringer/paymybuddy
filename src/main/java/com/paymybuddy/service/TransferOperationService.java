@@ -79,7 +79,7 @@ public class TransferOperationService {
 		return buildedTransfer;
 	}
 		
-	private Operation buildOperationFromTransferOperationDto(TransferOperationDTO transferOperationDTO) throws NegativeAmountException {
+	private Operation buildOperationFromTransferOperationDto(TransferOperationDTO transferOperationDTO) throws NegativeAmountException, ResourceNotFoundException {
 		
 		Tax taxApplied = taxService.getTax(transferOperationDTO.getTaxApplied());
 		Operation buildedOperation = new Operation();

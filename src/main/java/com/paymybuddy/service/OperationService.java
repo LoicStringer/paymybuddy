@@ -14,6 +14,10 @@ public class OperationService {
 	@Autowired
 	private OperationDAO operationDao;
 	
+	public Operation getOperation(long id) {
+		return(operationDao.findById(id)).orElse(null);
+	}
+	
 	public Operation saveOperation(Operation operationToSave) {
 		return operationDao.save(operationToSave);
 	}

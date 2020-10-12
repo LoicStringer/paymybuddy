@@ -1,6 +1,7 @@
 package com.paymybuddy.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.paymybuddy.dao.TaxDAO;
 import com.paymybuddy.entity.Tax;
+import com.paymybuddy.exception.ResourceNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class TaxServiceTest {
@@ -34,7 +36,7 @@ class TaxServiceTest {
 	}
 	
 	@Test
-	void getTaxTest() {
+	void getTaxTest() throws ResourceNotFoundException {
 		
 		when(taxDao.findById(1)).thenReturn(Optional.of(hugeTax));
 		
@@ -49,4 +51,11 @@ class TaxServiceTest {
 		assertEquals(taxService.addTaxToDb(hugeTax).getTaxDescription(),"Huge tax");
 	}
 
+	@Test
+	void resourceNotFoundExceptionTest() {
+		
+		when(taxDao.findById(any(Integer.class))).thenReturn(Optional.empty());
+		
+		assertThrows(ResourceNotFoundException.class,()-> taxService.getTax(any(Integer.class)));
+	}
 }

@@ -1,0 +1,4 @@
+INSERT INTO account (account_id, account_balance, account_email, account_name, account_password) VALUES (1, 500, "carlitobrigante@depalma.com", "Brigante", "AlPacinoIsTheGOAT");
+INSERT INTO account (account_id, account_balance, account_email, account_name, account_password) VALUES (2, 500, "tony.montana@depalma.com", "Montana", "AlPacinoIsTheGOAT");
+INSERT INTO bank_account (bank_account_id, bank_account_holder_name, bank_account_iban, account_holder_id) VALUES (1, "Brigante", "FR7611808009101234567890147", 1);
+INSERT INTO tax (tax_id, tax_description, tax_rate) VALUES (1, "Transfer tax", 0.005);

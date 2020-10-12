@@ -58,4 +58,5 @@ public class AccountService {
 		if(amount<0)
 			throw new NegativeAmountException("Amount can't be negative!");
 	}
+
 }

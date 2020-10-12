@@ -85,7 +85,7 @@ public class ProvidingOperationService {
 		return providingOperationInProgress;
 	}
 
-	private Operation buildOperationInProgressFromProvidingOperatioDto(ProvidingOperationDTO providingOperationDto) throws NegativeAmountException {
+	private Operation buildOperationInProgressFromProvidingOperatioDto(ProvidingOperationDTO providingOperationDto) throws NegativeAmountException, ResourceNotFoundException {
 
 		Tax taxApplied = taxService.getTax(providingOperationDto.getTaxApplied());
 
