@@ -31,10 +31,6 @@ public class TransferOperationService {
 	@Autowired
 	private OperationService operationService;
 	
-	@Autowired
-	private TransferService transferService;
-	
-	
 	@Transactional(rollbackOn = Exception.class)
 	public TransferOperationResponse processTransferOperation (TransferOperationDTO transferOperationDto) throws InsufficientBalanceException, ResourceNotFoundException, NegativeAmountException {
 					
@@ -43,11 +39,12 @@ public class TransferOperationService {
 	
 		accountService.removeMoneyFromAccount(transferInProgress.getAccountFrom(), operationInProgress.getOperationAmount());
 		accountService.addMoneyToAccount(transferInProgress.getAccountTo(), operationInProgress.getOperationAmount());
-		accountService.updateAccount(transferInProgress.getAccountFrom());
-		accountService.updateAccount(transferInProgress.getAccountTo());
 		
 		transferInProgress.setTransferOperationId(operationService.saveOperation(operationInProgress));
-		transferService.saveTransfer(transferInProgress);
+		transferInProgress.getAccountFrom().addTransfer(transferInProgress);
+		
+		accountService.updateAccount(transferInProgress.getAccountFrom());
+		accountService.updateAccount(transferInProgress.getAccountTo());
 		
 		TransferOperationResponse transferOperationCompletedInfo = new TransferOperationResponse();
 		transferOperationCompletedInfo.setMessage("Transfer operation has succeed.");

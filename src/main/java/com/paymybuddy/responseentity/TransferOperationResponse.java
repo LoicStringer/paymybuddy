@@ -13,11 +13,6 @@ public class TransferOperationResponse {
 	public TransferOperationResponse() {
 	}
 
-	public TransferOperationResponse(String message, TransferOperationDTO transferOperationDto) {
-		this.message = message;
-		this.transferOperationDto = transferOperationDto;
-	}
-
 	public String getMessage() {
 		return message;
 	}

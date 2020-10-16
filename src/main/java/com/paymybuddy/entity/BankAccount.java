@@ -1,9 +1,13 @@
 package com.paymybuddy.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.NaturalId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
@@ -24,6 +30,7 @@ public class BankAccount {
 	@Column(name = "BANK_ACCOUNT_ID")
 	private long bankAccountId;
 
+	@NaturalId
 	@NotNull
 	@Column(name = "BANK_ACCOUNT_IBAN", length = 35, unique = true, nullable = false)
 	private String bankAccountIban;
@@ -35,27 +42,21 @@ public class BankAccount {
 	@Column(name = "BANK_ACCOUNT_DESCRIPTION", length = 20)
 	private String bankAccountDescription;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@NotNull
 	@JoinColumn(name = "ACCOUNT_HOLDER_ID")
-	private Account accountHolderId;
+	private Account holderAccount;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "bankAccountId")
-	private List<Providing> providingsToAccount;
+	@OneToMany(mappedBy = "bankAccount", orphanRemoval = true,cascade = CascadeType.ALL)
+	private List<Providing> providingsToAccount = new ArrayList<Providing>();
 
 	public BankAccount() {
 	}
-
-	public BankAccount(long bankAccountId, String bankAccountIban, String bankAccountHolderName,
-			String bankAccountDescription, Account accountHolderId, List<Providing> providingsToAccount) {
-		super();
-		this.bankAccountId = bankAccountId;
-		this.bankAccountIban = bankAccountIban;
-		this.bankAccountHolderName = bankAccountHolderName;
-		this.bankAccountDescription = bankAccountDescription;
-		this.accountHolderId = accountHolderId;
-		this.providingsToAccount = providingsToAccount;
+	
+	public void addProviding(Providing providing) {
+		this.providingsToAccount.add(providing);
+		providing.setBankAccount(this);
 	}
 
 	public long getBankAccountId() {
@@ -90,12 +91,12 @@ public class BankAccount {
 		this.bankAccountDescription = bankAccountDescription;
 	}
 
-	public Account getAccountHolderId() {
-		return accountHolderId;
+	public Account getHolderAccount() {
+		return holderAccount;
 	}
 
-	public void setAccountHolderId(Account accountHolderId) {
-		this.accountHolderId = accountHolderId;
+	public void setHolderAccount(Account holderAccount) {
+		this.holderAccount = holderAccount;
 	}
 
 	public List<Providing> getProvidingsToAccount() {
@@ -108,17 +109,9 @@ public class BankAccount {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((accountHolderId == null) ? 0 : accountHolderId.hashCode());
-		result = prime * result + ((bankAccountDescription == null) ? 0 : bankAccountDescription.hashCode());
-		result = prime * result + ((bankAccountHolderName == null) ? 0 : bankAccountHolderName.hashCode());
-		result = prime * result + ((bankAccountIban == null) ? 0 : bankAccountIban.hashCode());
-		result = prime * result + (int) (bankAccountId ^ (bankAccountId >>> 32));
-		result = prime * result + ((providingsToAccount == null) ? 0 : providingsToAccount.hashCode());
-		return result;
+		return Objects.hashCode(bankAccountIban);
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -128,36 +121,15 @@ public class BankAccount {
 		if (getClass() != obj.getClass())
 			return false;
 		BankAccount other = (BankAccount) obj;
-		if (accountHolderId == null) {
-			if (other.accountHolderId != null)
-				return false;
-		} else if (!accountHolderId.equals(other.accountHolderId))
-			return false;
-		if (bankAccountDescription == null) {
-			if (other.bankAccountDescription != null)
-				return false;
-		} else if (!bankAccountDescription.equals(other.bankAccountDescription))
-			return false;
-		if (bankAccountHolderName == null) {
-			if (other.bankAccountHolderName != null)
-				return false;
-		} else if (!bankAccountHolderName.equals(other.bankAccountHolderName))
-			return false;
-		if (bankAccountIban == null) {
-			if (other.bankAccountIban != null)
-				return false;
-		} else if (!bankAccountIban.equals(other.bankAccountIban))
-			return false;
-		if (bankAccountId != other.bankAccountId)
-			return false;
-		if (providingsToAccount == null) {
-			if (other.providingsToAccount != null)
-				return false;
-		} else if (!providingsToAccount.equals(other.providingsToAccount))
-			return false;
-		return true;
+		return Objects.equals(bankAccountIban, other.getBankAccountIban());
 	}
 
-	
-	
+	@Override
+	public String toString() {
+		return "BankAccount [bankAccountId=" + bankAccountId + ", bankAccountIban=" + bankAccountIban
+				+ ", bankAccountHolderName=" + bankAccountHolderName + ", bankAccountDescription="
+				+ bankAccountDescription + ", holderAccount=" + holderAccount.getAccountId() + ", providingsToAccount="
+				+ providingsToAccount + "]";
+	}
+
 }

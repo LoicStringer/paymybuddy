@@ -24,8 +24,4 @@ public class TransferService {
 		return transfers;
 	}
 	
-	public Transfer saveTransfer(Transfer transferToSave) {
-		return transferDao.save(transferToSave);
-	}
-	
 }

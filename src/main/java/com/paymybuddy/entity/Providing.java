@@ -25,20 +25,22 @@ public class Providing {
 	}
 
 	@Id
+	@MapsId("holderAccount")
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ACCOUNT_ID")
-	private Account holderAccountId;
+	private Account holderAccount;
 
 	@Id
-	@ManyToOne
+	@MapsId("bankAccountId")
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BANK_ACCOUNT_ID")
-	private BankAccount bankAccountId;
+	private BankAccount bankAccount;
 
 	@Id
+	@MapsId("operationId")
 	@OneToOne
-	@MapsId
 	@JoinColumn(name = "PROVIDING_OPERATION_ID", referencedColumnName = "OPERATION_ID")
-	private Operation providingOperationId;
+	private Operation providingOperation;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -48,37 +50,28 @@ public class Providing {
 	public Providing() {
 	}
 
-	public Providing(Account holderAccountId, BankAccount bankAccountId, Operation providingOperationId,
-			ProvidingType providingType) {
-		super();
-		this.holderAccountId = holderAccountId;
-		this.bankAccountId = bankAccountId;
-		this.providingOperationId = providingOperationId;
-		this.providingType = providingType;
+	public Account getHolderAccount() {
+		return holderAccount;
 	}
 
-	public Account getHolderAccountId() {
-		return holderAccountId;
+	public void setHolderAccount(Account holderAccount) {
+		this.holderAccount = holderAccount;
 	}
 
-	public void setHolderAccountId(Account holderAccountId) {
-		this.holderAccountId = holderAccountId;
+	public BankAccount getBankAccount() {
+		return bankAccount;
 	}
 
-	public BankAccount getBankAccountId() {
-		return bankAccountId;
+	public void setBankAccount(BankAccount bankAccount) {
+		this.bankAccount = bankAccount;
 	}
 
-	public void setBankAccountId(BankAccount bankAccountId) {
-		this.bankAccountId = bankAccountId;
+	public Operation getProvidingOperation() {
+		return providingOperation;
 	}
 
-	public Operation getProvidingOperationId() {
-		return providingOperationId;
-	}
-
-	public void setProvidingOperationId(Operation providingOperationId) {
-		this.providingOperationId = providingOperationId;
+	public void setProvidingOperation(Operation providingOperation) {
+		this.providingOperation = providingOperation;
 	}
 
 	public ProvidingType getProvidingType() {
@@ -93,9 +86,9 @@ public class Providing {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((bankAccountId == null) ? 0 : bankAccountId.hashCode());
-		result = prime * result + ((holderAccountId == null) ? 0 : holderAccountId.hashCode());
-		result = prime * result + ((providingOperationId == null) ? 0 : providingOperationId.hashCode());
+		result = prime * result + ((bankAccount == null) ? 0 : bankAccount.hashCode());
+		result = prime * result + ((holderAccount == null) ? 0 : holderAccount.hashCode());
+		result = prime * result + ((providingOperation == null) ? 0 : providingOperation.hashCode());
 		result = prime * result + ((providingType == null) ? 0 : providingType.hashCode());
 		return result;
 	}
@@ -109,20 +102,20 @@ public class Providing {
 		if (getClass() != obj.getClass())
 			return false;
 		Providing other = (Providing) obj;
-		if (bankAccountId == null) {
-			if (other.bankAccountId != null)
+		if (bankAccount == null) {
+			if (other.bankAccount != null)
 				return false;
-		} else if (!bankAccountId.equals(other.bankAccountId))
+		} else if (!bankAccount.equals(other.bankAccount))
 			return false;
-		if (holderAccountId == null) {
-			if (other.holderAccountId != null)
+		if (holderAccount == null) {
+			if (other.holderAccount != null)
 				return false;
-		} else if (!holderAccountId.equals(other.holderAccountId))
+		} else if (!holderAccount.equals(other.holderAccount))
 			return false;
-		if (providingOperationId == null) {
-			if (other.providingOperationId != null)
+		if (providingOperation == null) {
+			if (other.providingOperation != null)
 				return false;
-		} else if (!providingOperationId.equals(other.providingOperationId))
+		} else if (!providingOperation.equals(other.providingOperation))
 			return false;
 		if (providingType != other.providingType)
 			return false;
@@ -131,9 +124,11 @@ public class Providing {
 
 	@Override
 	public String toString() {
-		return "Providing [holderAccountId=" + holderAccountId + ", bankAccountId=" + bankAccountId
-				+ ", providingOperationId=" + providingOperationId + ", providingType=" + providingType + "]";
+		return "Providing [holderAccount=" + holderAccount.getAccountUserName() + ", bankAccount=" + bankAccount.getBankAccountDescription() + ", providingOperation="
+				+ providingOperation + ", providingType=" + providingType + "]";
 	}
+
+	
 
 	
 }

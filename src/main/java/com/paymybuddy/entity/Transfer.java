@@ -2,6 +2,7 @@ package com.paymybuddy.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -16,18 +17,18 @@ import javax.persistence.Table;
 public class Transfer {
 
 	@Id
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRANSFER_ACCOUNT_FROM")
 	private Account accountFrom;
 
 	@Id
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TRANSFER_ACCOUNT_TO")
 	private Account accountTo;
 
 	@Id
 	@OneToOne
-	@MapsId
+	@MapsId("operationId")
 	@JoinColumn(name = "TRANSFER_OPERATION_ID", referencedColumnName = "OPERATION_ID")
 	private Operation transferOperationId;
 
@@ -35,13 +36,6 @@ public class Transfer {
 	private String transferDescription;
 
 	public Transfer() {
-	}
-
-	public Transfer(Account accountFrom, Account accountTo, Operation transferOperationId, String transferDescription) {
-		this.accountFrom = accountFrom;
-		this.accountTo = accountTo;
-		this.transferOperationId = transferOperationId;
-		this.transferDescription = transferDescription;
 	}
 
 	public Account getAccountFrom() {
@@ -119,6 +113,13 @@ public class Transfer {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Transfer [accountFrom=" + accountFrom.getAccountUserName() + ", accountTo=" + accountTo.getAccountUserName() + ", transferOperationId="
+				+ transferOperationId + ", transferDescription=" + transferDescription + "]";
+	}
+
+	
 	
 
 }

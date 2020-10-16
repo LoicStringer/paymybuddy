@@ -44,16 +44,6 @@ public class Operation {
 	public Operation() {
 	}
 
-	public Operation(long operationId, Instant operationDate, double operationAmount, double operationFee,
-			Tax operationTax) {
-		super();
-		this.operationId = operationId;
-		this.operationDate = operationDate;
-		this.operationAmount = operationAmount;
-		this.operationFee = operationFee;
-		this.operationTax = operationTax;
-	}
-
 	public long getOperationId() {
 		return operationId;
 	}
@@ -137,4 +127,11 @@ public class Operation {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Operation [operationId=" + operationId + ", operationDate=" + operationDate + ", operationAmount="
+				+ operationAmount + ", operationFee=" + operationFee + ", operationTax=" + operationTax + "]";
+	}
+
+	
 }

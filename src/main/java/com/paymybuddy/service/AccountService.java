@@ -32,7 +32,7 @@ public class AccountService {
 	public Account updateAccount(Account account) {
 		return accountDao.save(account);
 	}
-
+	
 	public void addMoneyToAccount(Account account, double amount) throws NegativeAmountException {
 		checkForNegativeAmount(amount);
 		double newBalance = account.getAccountBalance()+amount;

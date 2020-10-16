@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.paymybuddy.dto.BankAccountDTO;
 import com.paymybuddy.entity.Account;
-import com.paymybuddy.entity.BankAccount;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.exception.UniqueConstraintViolationException;
 import com.paymybuddy.service.AccountService;
@@ -29,24 +29,27 @@ class BankAccountServiceTestIT {
 	@Autowired 
 	private AccountService accountService;
 	
-	private static BankAccount bankAccount;
+	private static BankAccountDTO bankAccountDto;
 	private static Account accountHolder;
+	
 	
 	@BeforeAll
 	static void setUp() throws ResourceNotFoundException {
 		
-		bankAccount = new BankAccount();
-		bankAccount.setAccountHolderId(accountHolder);
-		bankAccount.setBankAccountHolderName("Montana");
-		bankAccount.setBankAccountIban("FR1420041010050500013082606");
+		bankAccountDto = new BankAccountDTO();
+		bankAccountDto.setAccountHolderId(2);
+		bankAccountDto.setBankAccountHolderName("Montana");
+		bankAccountDto.setBankAccountIban("FR1420041010050500013082606");
 	}
 	
 	@Test
-	void createBankAccountTest() throws UniqueConstraintViolationException, ResourceNotFoundException {
-		
+	void addABankAccountTest() throws UniqueConstraintViolationException, ResourceNotFoundException {
+
 		accountHolder = accountService.getAccount(2);
-		bankAccount.setAccountHolderId(accountHolder);
-		assertEquals(bankAccountService.saveBankAccount(bankAccount).getBankAccountHolderName(),"Montana");
+		bankAccountService.addABankAccount(bankAccountDto);
+		
+		assertEquals(accountHolder.getOwnedBankAccounts().get(0).getBankAccountIban(),"FR1420041010050500013082606");
+		assertEquals(bankAccountService.getBankAccountByIban("FR1420041010050500013082606").getHolderAccount().getAccountUserEmail(),"tony.montana@depalma.com");
 	}
 
 	@Test
@@ -62,10 +65,12 @@ class BankAccountServiceTestIT {
 	}
 	
 	@Test
-	void isUniqueConstraintExceptionThrownWhenSavingBankAccountWithDuplicatedIban() {
+	void isUniqueConstraintExceptionThrownWhenSavingBankAccountWithDuplicatedIban() throws UniqueConstraintViolationException, ResourceNotFoundException {
+		
+		bankAccountService.addABankAccount(bankAccountDto);
 		
 		Exception exception = assertThrows(UniqueConstraintViolationException.class,
-				()-> bankAccountService.saveBankAccount(bankAccountService.getBankAccount(1)));
+				()-> bankAccountService.addABankAccount(bankAccountDto));
 	
 		assertEquals(exception.getMessage(),"This bank account already exists.");
 	}

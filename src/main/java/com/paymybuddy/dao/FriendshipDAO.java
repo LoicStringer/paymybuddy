@@ -12,4 +12,5 @@ public interface FriendshipDAO extends JpaRepository<Friendship, FriendshipPK>{
 
 	List<Friendship> findByMyAccount(Account myAccount);
 	
+	
 }

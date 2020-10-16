@@ -34,9 +34,6 @@ public class ProvidingOperationService {
 	@Autowired
 	private BankAccountService bankAccountService;
 
-	@Autowired
-	private ProvidingService providingService;
-
 	@Transactional(rollbackOn = Exception.class)
 	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationDTO providingOperationDto) throws InsufficientBalanceException, BankProcessFailedException, ResourceNotFoundException, NegativeAmountException {
 
@@ -44,28 +41,28 @@ public class ProvidingOperationService {
 		
 		Operation operationInProgress = buildOperationInProgressFromProvidingOperatioDto(providingOperationDto);
 		Providing providingInProgress = buildProvidingInProgressFromProvidingOperatioDto(providingOperationDto);
+		providingInProgress.setProvidingOperation(operationService.saveOperation(operationInProgress));
 		
 		switch (providingInProgress.getProvidingType()) {
 		case ACCOUNTTOBANKACCOUNT:
 			bankAccountService.bankAccountDepositProcess();
-			accountService.removeMoneyFromAccount(providingInProgress.getHolderAccountId(),
+			accountService.removeMoneyFromAccount(providingInProgress.getHolderAccount(),
 					operationInProgress.getOperationAmount());
-			accountService.updateAccount(providingInProgress.getHolderAccountId());
-			providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
-			providingService.saveProviding(providingInProgress);
+			providingInProgress.getHolderAccount().addProviding(providingInProgress);
 			break;
 			
 		case BANKACCOUNTTOACCOUNT:
 			bankAccountService.bankAccountWithdrawProcess();
-			accountService.addMoneyToAccount(providingInProgress.getHolderAccountId(),
+			accountService.addMoneyToAccount(providingInProgress.getHolderAccount(),
 					operationInProgress.getOperationAmount());
-			accountService.updateAccount(providingInProgress.getHolderAccountId());
-			providingInProgress.setProvidingOperationId(operationService.saveOperation(operationInProgress));
-			providingService.saveProviding(providingInProgress);
+			providingInProgress.getBankAccount().addProviding(providingInProgress);
 			break;
 		}
 		
-		providingOperationCompletedInfo.setMessage("Providing operation has succed");
+		accountService.updateAccount(providingInProgress.getHolderAccount());
+		bankAccountService.updateBankAccount(providingInProgress.getBankAccount());
+		
+		providingOperationCompletedInfo.setMessage("Providing operation has succeed");
 		providingOperationCompletedInfo.setProvidingOperationDto(providingOperationDto);
 
 		return providingOperationCompletedInfo;
@@ -103,8 +100,8 @@ public class ProvidingOperationService {
 
 		Providing buildedProviding = new Providing();
 
-		buildedProviding.setHolderAccountId(accountService.getAccount(providingOperationDto.getAccountId()));
-		buildedProviding.setBankAccountId(bankAccountService.getBankAccount(providingOperationDto.getBankAccountId()));
+		buildedProviding.setHolderAccount(accountService.getAccount(providingOperationDto.getAccountId()));
+		buildedProviding.setBankAccount(bankAccountService.getBankAccount(providingOperationDto.getBankAccountId()));
 		buildedProviding.setProvidingType(ProvidingType.valueOf(providingOperationDto.getProvidingType()));
 
 		return buildedProviding;

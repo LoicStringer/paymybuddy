@@ -69,45 +69,6 @@ public class ProvidingOperationForm {
 		this.providingType = providingType;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (accountId ^ (accountId >>> 32));
-		long temp;
-		temp = Double.doubleToLongBits(amount);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + (int) (bankAccountId ^ (bankAccountId >>> 32));
-		result = prime * result + ((providingType == null) ? 0 : providingType.hashCode());
-		result = prime * result + taxApplied;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ProvidingOperationForm other = (ProvidingOperationForm) obj;
-		if (accountId != other.accountId)
-			return false;
-		if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
-			return false;
-		if (bankAccountId != other.bankAccountId)
-			return false;
-		if (providingType == null) {
-			if (other.providingType != null)
-				return false;
-		} else if (!providingType.equals(other.providingType))
-			return false;
-		if (taxApplied != other.taxApplied)
-			return false;
-		return true;
-	}
-
 	
 	
 }

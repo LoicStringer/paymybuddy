@@ -1,7 +1,6 @@
 package com.paymybuddy.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -51,13 +50,4 @@ class TransferServiceTest {
 		assertEquals(transferService.getTransfersByAccount(account).get(0),transfer);
 	}
 	
-	
-	@Test
-	void saveTransferTest() {
-		
-		when(transferDao.save(any(Transfer.class))).thenReturn(transfer);
-		
-		assertEquals(transferService.saveTransfer(transfer).getAccountFrom(), account);
-	}
-
 }
