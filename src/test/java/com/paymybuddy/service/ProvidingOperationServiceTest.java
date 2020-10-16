@@ -6,6 +6,7 @@ import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.paymybuddy.dto.ProvidingOperationDTO;
 import com.paymybuddy.entity.Account;
+import com.paymybuddy.entity.BankAccount;
 import com.paymybuddy.exception.BankProcessFailedException;
 import com.paymybuddy.exception.InsufficientBalanceException;
 import com.paymybuddy.exception.NegativeAmountException;
@@ -48,13 +50,20 @@ class ProvidingOperationServiceTest {
 	@Mock
 	private ProvidingService providingService;
 
+	private static BankAccount bankAccount;
+	
 	private ProvidingOperationForm form;
 	private Account account;
-
 	private ProvidingOperationDTO dto;
 
+	@BeforeAll
+	static void setUp() {
+		bankAccount = new BankAccount();
+		bankAccount.setBankAccountId(1);
+	}
+	
 	@BeforeEach
-	void setUp() {
+	void setUpForTests() {
 
 		form = new ProvidingOperationForm();
 		form.setAccountId(1);
@@ -89,11 +98,13 @@ class ProvidingOperationServiceTest {
 			dto = providingOperationService.convertProvidingFormToProvidingOperationDto(form);
 
 			when(accountService.getAccount(1)).thenReturn(account);
+			when(bankAccountService.getBankAccount(1)).thenReturn(bankAccount);
 			doCallRealMethod().when(accountService).removeMoneyFromAccount(account, form.getAmount());
 
 			providingOperationService.processProvidingOperation(dto);
 
 			assertEquals(account.getAccountBalance(), 400);
+			assertEquals(account.getProvidingsToBankAccount().get(0).getBankAccount(),bankAccount);
 		}
 
 		@Test
@@ -105,11 +116,13 @@ class ProvidingOperationServiceTest {
 			dto = providingOperationService.convertProvidingFormToProvidingOperationDto(form);
 
 			when(accountService.getAccount(1)).thenReturn(account);
+			when(bankAccountService.getBankAccount(1)).thenReturn(bankAccount);
 			doCallRealMethod().when(accountService).addMoneyToAccount(account, form.getAmount());
 
 			providingOperationService.processProvidingOperation(dto);
 
 			assertEquals(account.getAccountBalance(), 600);
+			assertEquals(bankAccount.getProvidingsToAccount().get(0).getHolderAccount(),account);
 		}
 	}
 

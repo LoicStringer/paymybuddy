@@ -29,13 +29,6 @@ public class Tax {
 	public Tax() {
 	}
 
-	public Tax(int taxId, double taxRate, String taxDescription) {
-		super();
-		this.taxId = taxId;
-		this.taxRate = taxRate;
-		this.taxDescription = taxDescription;
-	}
-
 	public int getTaxId() {
 		return taxId;
 	}
@@ -93,4 +86,11 @@ public class Tax {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "Tax [taxId=" + taxId + ", taxRate=" + taxRate + ", taxDescription=" + taxDescription + "]";
+	}
+
+	
+	
 }

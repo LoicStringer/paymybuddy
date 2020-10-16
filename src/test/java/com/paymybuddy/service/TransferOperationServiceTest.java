@@ -61,6 +61,7 @@ class TransferOperationServiceTest {
 		form.setAccountFromId(1);
 		form.setAccountToId(2);
 		form.setAmount(122.20);
+		form.setTransferDescription("Weed");
 		form.setTaxApplied(1);
 	}
 
@@ -92,6 +93,7 @@ class TransferOperationServiceTest {
 
 			assertEquals(accountFrom.getAccountBalance(), (527.50 - 122.20));
 			assertEquals(accountTo.getAccountBalance(), (284.75 + 122.20));
+			assertEquals(accountFrom.getTransfers().get(0).getTransferDescription(),"Weed");
 		}
 	}
 

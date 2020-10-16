@@ -5,50 +5,50 @@ import java.io.Serializable;
 public class ProvidingPK implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private long holderAccountId;
-	private long bankAccountId;
-	private long providingOperationId;
+	private long holderAccount;
+	private long bankAccount;
+	private long providingOperation;
 
 	public ProvidingPK() {
 	}
 
-	public ProvidingPK(long holderAccountId, long bankAccountId, long providingOperationId) {
-		this.holderAccountId = holderAccountId;
-		this.bankAccountId = bankAccountId;
-		this.providingOperationId = providingOperationId;
+	public ProvidingPK(long holderAccount, long bankAccount, long providingOperation) {
+		this.holderAccount = holderAccount;
+		this.bankAccount = bankAccount;
+		this.providingOperation = providingOperation;
 	}
 
-	public long getHolderAccountId() {
-		return holderAccountId;
+	public long getHolderAccount() {
+		return holderAccount;
 	}
 
-	public void setHolderAccountId(long holderAccountId) {
-		this.holderAccountId = holderAccountId;
+	public void setHolderAccount(long holderAccount) {
+		this.holderAccount = holderAccount;
 	}
 
-	public long getBankAccountId() {
-		return bankAccountId;
+	public long getBankAccount() {
+		return bankAccount;
 	}
 
-	public void setBankAccountId(long bankAccountId) {
-		this.bankAccountId = bankAccountId;
+	public void setBankAccount(long bankAccount) {
+		this.bankAccount = bankAccount;
 	}
 
-	public long getProvidingOperationId() {
-		return providingOperationId;
+	public long getProvidingOperation() {
+		return providingOperation;
 	}
 
-	public void setProvidingOperationId(long providingOperationId) {
-		this.providingOperationId = providingOperationId;
+	public void setProvidingOperation(long providingOperation) {
+		this.providingOperation = providingOperation;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (bankAccountId ^ (bankAccountId >>> 32));
-		result = prime * result + (int) (holderAccountId ^ (holderAccountId >>> 32));
-		result = prime * result + (int) (providingOperationId ^ (providingOperationId >>> 32));
+		result = prime * result + (int) (bankAccount ^ (bankAccount >>> 32));
+		result = prime * result + (int) (holderAccount ^ (holderAccount >>> 32));
+		result = prime * result + (int) (providingOperation ^ (providingOperation >>> 32));
 		return result;
 	}
 
@@ -61,11 +61,11 @@ public class ProvidingPK implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProvidingPK other = (ProvidingPK) obj;
-		if (bankAccountId != other.bankAccountId)
+		if (bankAccount != other.bankAccount)
 			return false;
-		if (holderAccountId != other.holderAccountId)
+		if (holderAccount != other.holderAccount)
 			return false;
-		if (providingOperationId != other.providingOperationId)
+		if (providingOperation != other.providingOperation)
 			return false;
 		return true;
 	}

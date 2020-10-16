@@ -1,17 +1,20 @@
 package com.paymybuddy.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
+
+import org.hibernate.annotations.NaturalId;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
@@ -32,6 +35,7 @@ public class Account {
 	@NotNull
 	@Column(name = "ACCOUNT_EMAIL", length = 50, unique = true, nullable = false)
 	@Email(message="Invalid email")
+	@NaturalId
 	private String accountUserEmail;
 
 	@NotNull
@@ -42,41 +46,46 @@ public class Account {
 	private double accountBalance;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "accountTo")
-	private List<Transfer> transfersTo;
+	@OneToMany(mappedBy = "accountFrom",orphanRemoval = true,cascade = CascadeType.ALL)
+	private List<Transfer> transfers = new ArrayList<Transfer>();
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "friendWith")
-	private List<Friendship> friendWith;
+	@OneToMany(mappedBy = "myFriend", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Friendship> friendships = new ArrayList<Friendship>();
 
-	/*
-	@JsonIgnore
-	@OneToMany
-	private List<Providing> providingsToBankAccount;
-	*/ 
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "accountHolderId")
-	private List<BankAccount> ownedBankAccounts;
+	@OneToMany(mappedBy = "holderAccount",orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Providing> providingsToBankAccount = new ArrayList<Providing>();
+	
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "holderAccount",orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<BankAccount> ownedBankAccounts = new ArrayList<BankAccount>();
 
 	public Account() {
 	}
 
-	public Account(long accountId, String accountUserName, String accountUserEmail, String accountUserPassword,
-			double accountBalance, List<Transfer> transfersTo, List<Friendship> friendWith,
-			List<Providing> providingsToBankAccount, List<BankAccount> ownedBankAccounts) {
-		super();
-		this.accountId = accountId;
-		this.accountUserName = accountUserName;
-		this.accountUserEmail = accountUserEmail;
-		this.accountUserPassword = accountUserPassword;
-		this.accountBalance = accountBalance;
-		this.transfersTo = transfersTo;
-		this.friendWith = friendWith;
-		//this.providingsToBankAccount = providingsToBankAccount;
-		this.ownedBankAccounts = ownedBankAccounts;
+	public void addFriendship(Friendship friendship) {
+		this.friendships.add(friendship);
+		friendship.setMyAccount(this);
 	}
-
+	
+	public void addProviding(Providing providing) {
+		this.providingsToBankAccount.add(providing);
+		providing.setHolderAccount(this);
+	}
+		
+	public void addBankAccount(BankAccount bankAccount) {
+		this.ownedBankAccounts.add(bankAccount);
+		bankAccount.setHolderAccount(this);
+	}
+	
+	public void addTransfer(Transfer transfer) {
+		this.transfers.add(transfer);
+		transfer.setAccountFrom(this);
+	}
+	
 	public long getAccountId() {
 		return accountId;
 	}
@@ -117,22 +126,22 @@ public class Account {
 		this.accountBalance = accountBalance;
 	}
 
-	public List<Transfer> getTransfersTo() {
-		return transfersTo;
+	public List<Transfer> getTransfers() {
+		return transfers;
 	}
 
-	public void setTransfersTo(List<Transfer> transfersTo) {
-		this.transfersTo = transfersTo;
+	public void setTransfers(List<Transfer> transfers) {
+		this.transfers = transfers;
 	}
 
-	public List<Friendship> getFriendWith() {
-		return friendWith;
+	public List<Friendship> getFriendships() {
+		return friendships;
 	}
 
-	public void setFriendWith(List<Friendship> friendWith) {
-		this.friendWith = friendWith;
+	public void setFriendships(List<Friendship> friendships) {
+		this.friendships = friendships;
 	}
-/*
+
 	public List<Providing> getProvidingsToBankAccount() {
 		return providingsToBankAccount;
 	}
@@ -140,7 +149,7 @@ public class Account {
 	public void setProvidingsToBankAccount(List<Providing> providingsToBankAccount) {
 		this.providingsToBankAccount = providingsToBankAccount;
 	}
-*/
+
 	public List<BankAccount> getOwnedBankAccounts() {
 		return ownedBankAccounts;
 	}
@@ -151,22 +160,9 @@ public class Account {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(accountBalance);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + (int) (accountId ^ (accountId >>> 32));
-		result = prime * result + ((accountUserEmail == null) ? 0 : accountUserEmail.hashCode());
-		result = prime * result + ((accountUserName == null) ? 0 : accountUserName.hashCode());
-		result = prime * result + ((accountUserPassword == null) ? 0 : accountUserPassword.hashCode());
-		result = prime * result + ((friendWith == null) ? 0 : friendWith.hashCode());
-		result = prime * result + ((ownedBankAccounts == null) ? 0 : ownedBankAccounts.hashCode());
-		//result = prime * result + ((providingsToBankAccount == null) ? 0 : providingsToBankAccount.hashCode());
-		result = prime * result + ((transfersTo == null) ? 0 : transfersTo.hashCode());
-		return result;
+		return Objects.hashCode(accountUserEmail);
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -176,60 +172,16 @@ public class Account {
 		if (getClass() != obj.getClass())
 			return false;
 		Account other = (Account) obj;
-		if (Double.doubleToLongBits(accountBalance) != Double.doubleToLongBits(other.accountBalance))
-			return false;
-		if (accountId != other.accountId)
-			return false;
-		if (accountUserEmail == null) {
-			if (other.accountUserEmail != null)
-				return false;
-		} else if (!accountUserEmail.equals(other.accountUserEmail))
-			return false;
-		if (accountUserName == null) {
-			if (other.accountUserName != null)
-				return false;
-		} else if (!accountUserName.equals(other.accountUserName))
-			return false;
-		if (accountUserPassword == null) {
-			if (other.accountUserPassword != null)
-				return false;
-		} else if (!accountUserPassword.equals(other.accountUserPassword))
-			return false;
-		if (friendWith == null) {
-			if (other.friendWith != null)
-				return false;
-		} else if (!friendWith.equals(other.friendWith))
-			return false;
-		if (ownedBankAccounts == null) {
-			if (other.ownedBankAccounts != null)
-				return false;
-		} else if (!ownedBankAccounts.equals(other.ownedBankAccounts))
-			return false;
-		/*
-		if (providingsToBankAccount == null) {
-			if (other.providingsToBankAccount != null)
-				return false;
-		} else if (!providingsToBankAccount.equals(other.providingsToBankAccount))
-			return false;
-			*/
-		if (transfersTo == null) {
-			if (other.transfersTo != null)
-				return false;
-		} else if (!transfersTo.equals(other.transfersTo))
-			return false;
-		return true;
+		return Objects.equals(accountUserEmail, other.getAccountUserEmail());
 	}
-/*
+
 	@Override
 	public String toString() {
 		return "Account [accountId=" + accountId + ", accountUserName=" + accountUserName + ", accountUserEmail="
 				+ accountUserEmail + ", accountUserPassword=" + accountUserPassword + ", accountBalance="
-				+ accountBalance + ", transfersTo=" + transfersTo + ", friendWith=" + friendWith
+				+ accountBalance + ", transfers=" + transfers + ", friendships=" + friendships
 				+ ", providingsToBankAccount=" + providingsToBankAccount + ", ownedBankAccounts=" + ownedBankAccounts
 				+ "]";
 	}
-*/
-	
-	
-	
+
 }

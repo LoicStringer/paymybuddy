@@ -13,12 +13,6 @@ public class ProvidingOperationResponse {
 	public ProvidingOperationResponse() {
 	}
 
-	public ProvidingOperationResponse(String message, ProvidingOperationDTO providingOperationDto) {
-		super();
-		this.message = message;
-		this.providingOperationDto = providingOperationDto;
-	}
-
 	public String getMessage() {
 		return message;
 	}

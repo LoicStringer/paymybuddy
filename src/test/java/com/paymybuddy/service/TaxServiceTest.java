@@ -32,7 +32,10 @@ class TaxServiceTest {
 	@BeforeAll
 	static void setUp() {
 		
-		hugeTax = new Tax (1,0.5,"Huge tax");
+		hugeTax = new Tax ();
+		hugeTax.setTaxId(1);
+		hugeTax.setTaxRate(0.5);
+		hugeTax.setTaxDescription("Huge tax");
 	}
 	
 	@Test

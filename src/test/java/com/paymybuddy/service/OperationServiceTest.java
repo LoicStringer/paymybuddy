@@ -34,7 +34,10 @@ class OperationServiceTest {
 	
 	@BeforeAll
 	static void setUp() {
-		tax = new Tax(1, 0.5, "Huge tax");
+		tax = new Tax();
+		tax.setTaxId(1);
+		tax.setTaxRate(0.5);
+		tax.setTaxDescription("Huge tax");
 		
 		operation = new Operation();
 		operation.setOperationId(1);

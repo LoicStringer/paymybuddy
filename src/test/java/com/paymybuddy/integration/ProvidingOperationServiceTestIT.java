@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.paymybuddy.dto.ProvidingOperationDTO;
+import com.paymybuddy.entity.Operation;
 import com.paymybuddy.entity.Providing;
 import com.paymybuddy.exception.BankProcessFailedException;
 import com.paymybuddy.exception.InsufficientBalanceException;
@@ -20,6 +21,7 @@ import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.ProvidingOperationForm;
 import com.paymybuddy.service.AccountService;
+import com.paymybuddy.service.BankAccountService;
 import com.paymybuddy.service.OperationService;
 import com.paymybuddy.service.ProvidingOperationService;
 import com.paymybuddy.service.ProvidingService;
@@ -40,6 +42,9 @@ class ProvidingOperationServiceTestIT {
 	
 	@Autowired
 	private ProvidingService providingService;
+	
+	@Autowired
+	private BankAccountService bankAccountService;
 	
 	private ProvidingOperationForm form;
 	private ProvidingOperationDTO dto;
@@ -70,14 +75,13 @@ class ProvidingOperationServiceTestIT {
 		dto = providingOperationService.convertProvidingFormToProvidingOperationDto(form);
 		providingOperationService.processProvidingOperation(dto);
 		
-		
 		List<Providing> providings = providingService.getProvidingsByAccount(accountService.getAccount(1));
+		Operation operation = operationService.getOperation(providings.get(0).getProvidingOperation().getOperationId());
 		
-		System.out.println(providings.get(0));
-		
-		
+		assertEquals(operation.getOperationAmount(),100);
 		assertEquals(accountService.getAccount(1).getAccountBalance(),400);
-		
+		assertEquals(providings.get(0).getHolderAccount().getAccountUserName(),"Brigante");
+		assertEquals(accountService.getAccount(1).getProvidingsToBankAccount().get(0).getProvidingType().toString(),"ACCOUNTTOBANKACCOUNT"); 	
 	}
 
 	@Test
@@ -89,7 +93,14 @@ class ProvidingOperationServiceTestIT {
 		dto = providingOperationService.convertProvidingFormToProvidingOperationDto(form);
 		providingOperationService.processProvidingOperation(dto);
 		
+		List<Providing> providings = providingService.getProvidingsByBankAccount(bankAccountService.getBankAccount(1));
+		Operation operation = operationService.getOperation(providings.get(0).getProvidingOperation().getOperationId());
+		
+		assertEquals(operation.getOperationAmount(),100);
 		assertEquals(accountService.getAccount(2).getAccountBalance(),600);
+		assertEquals(providings.get(0).getHolderAccount().getAccountUserName(),"Montana");
+		assertEquals(bankAccountService.getBankAccount(1).getProvidingsToAccount().get(0).getHolderAccount(),accountService.getAccount(2));
+		
 	}
 	
 	@Test

@@ -25,7 +25,6 @@ class AccountServiceTestIT {
 	
 	private static Account accountToCreate;
 
-	
 	@BeforeAll
 	static void setUpAccountToCreateForTest() {
 		
@@ -50,7 +49,7 @@ class AccountServiceTestIT {
 	@Test
 	void getAccountByEmailTest() throws ResourceNotFoundException {
 		
-		assertEquals(accountService.getAccountByEmail("carlitobrigante@depalma.com").getAccountUserName(),"Brigante");
+		assertEquals(accountService.getAccountByEmail("carlito.brigante@depalma.com").getAccountUserName(),"Brigante");
 	}
 	
 	@Test

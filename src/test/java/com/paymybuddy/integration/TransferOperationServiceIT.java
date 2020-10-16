@@ -3,6 +3,8 @@ package com.paymybuddy.integration;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +13,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.paymybuddy.dto.TransferOperationDTO;
+import com.paymybuddy.entity.Operation;
+import com.paymybuddy.entity.Transfer;
 import com.paymybuddy.exception.InsufficientBalanceException;
 import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.form.TransferOperationForm;
 import com.paymybuddy.service.AccountService;
+import com.paymybuddy.service.OperationService;
 import com.paymybuddy.service.TransferOperationService;
+import com.paymybuddy.service.TransferService;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -29,6 +35,12 @@ class TransferOperationServiceIT {
 	@Autowired
 	private AccountService accountService;
 
+	@Autowired
+	private OperationService operationService;
+	
+	@Autowired
+	private TransferService TransferService;
+	
 	private TransferOperationDTO dto;
 	private TransferOperationForm form;
 
@@ -49,7 +61,6 @@ class TransferOperationServiceIT {
 		dto = transferOperationService.convertTransferOperatioFormToTransferOperatioDto(form);
 		
 		assertEquals(form.getTransferDescription(),dto.getTransferDescription());
-		
 	}
 	
 	@Test
@@ -59,8 +70,14 @@ class TransferOperationServiceIT {
 		dto = transferOperationService.convertTransferOperatioFormToTransferOperatioDto(form);
 		transferOperationService.processTransferOperation(dto);
 
+		List<Transfer> transfers = TransferService.getTransfersByAccount(accountService.getAccount(1));
+		Operation operation = operationService.getOperation(transfers.get(0).getTransferOperationId().getOperationId());
+		
+		assertEquals(operation.getOperationAmount(),100);
+		assertEquals(transfers.get(0).getAccountTo().getAccountUserName(),"Montana");
 		assertEquals(accountService.getAccount(1).getAccountBalance(), 400);
 		assertEquals(accountService.getAccount(2).getAccountBalance(), 600);
+		assertEquals(accountService.getAccount(1).getTransfers().get(0).getTransferDescription(),"Loan");
 	}
 
 	@Test
