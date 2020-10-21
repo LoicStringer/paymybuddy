@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.paymybuddy.entity.Account;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.exception.UniqueConstraintViolationException;
+import com.paymybuddy.exception.WrongPasswordException;
+import com.paymybuddy.form.ConnectionForm;
 import com.paymybuddy.service.AccountService;
 
 @ActiveProfiles("test")
@@ -32,6 +34,7 @@ class AccountServiceTestIT {
 		accountToCreate.setAccountUserName("Serpico");
 		accountToCreate.setAccountUserEmail("franck.serpico@lumet.com");
 		accountToCreate.setAccountUserPassword("AlPacinoIsTheGOAT");
+		
 	}
 	
 	@Test
@@ -53,6 +56,18 @@ class AccountServiceTestIT {
 	}
 	
 	@Test
+	void connectToMyAccountTest() throws ResourceNotFoundException, WrongPasswordException {
+		
+		ConnectionForm connectionForm = new ConnectionForm();
+		connectionForm.setEmail("carlito.brigante@depalma.com");
+		connectionForm.setPassword("AlPacinoIsTheGOAT");
+		
+		Account myAccount = accountService.getAccountByEmail("carlito.brigante@depalma.com");
+		
+		assertEquals(accountService.connectToMyAccount(connectionForm),myAccount);
+	}
+	
+	@Test
 	void isUniqueConstraintViolationExceptionThrownWhenCrreatingAccountWithDuplicatedEmail() throws UniqueConstraintViolationException  {
 		
 		Exception exception = assertThrows(UniqueConstraintViolationException.class, 
@@ -68,5 +83,18 @@ class AccountServiceTestIT {
 				()-> accountService.getAccount(100));
 		
 		assertEquals(exception.getMessage(),"Account not found.");
+	}
+	
+	@Test
+	void isWrongPasswordExceptionThrownWhenConnectingWithWrongPasswordTest() {
+		
+		ConnectionForm connectionForm = new ConnectionForm();
+		connectionForm.setEmail("carlito.brigante@depalma.com");
+		connectionForm.setPassword("wrongPassword");
+		
+		Exception exception = assertThrows(WrongPasswordException.class,
+				()-> accountService.connectToMyAccount(connectionForm));
+		
+		assertEquals(exception.getMessage(), "Wrong password.");
 	}
 }

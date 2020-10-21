@@ -2,6 +2,12 @@ package com.paymybuddy.dto;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>This class is used to manipulate data related to the {@link Friendship} entity 
+ * between front end and database.</p> 
+ * @author newbie
+ *@see FriendshipForm
+ */
 @Component
 public class FriendshipDTO {
 

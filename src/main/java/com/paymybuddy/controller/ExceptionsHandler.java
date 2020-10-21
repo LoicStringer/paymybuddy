@@ -15,13 +15,28 @@ import com.paymybuddy.exception.InsufficientBalanceException;
 import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.exception.UniqueConstraintViolationException;
+import com.paymybuddy.exception.WrongPasswordException;
 import com.paymybuddy.responseentity.ExceptionResponse;
 
+/**
+ * <p>Reuniting exceptions treatments in a this single class.
+ * Each method is associated to an exception and retrieve a detailed response message.</p>
+ * @author newbie
+ *@see ExceptionHandler
+ */
 @RestControllerAdvice
 public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
+	@ExceptionHandler(WrongPasswordException.class)
+	public ResponseEntity<ExceptionResponse> handleWrongPasswordExceptionException(WrongPasswordException ex) {
+
+		ExceptionResponse exceptionResponse = exceptionResponseBuild(ex);
+
+		return new ResponseEntity<ExceptionResponse>(exceptionResponse, getHttpStatusFromException(ex));
+	}
+	
 	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<ExceptionResponse> handleInvalidParameterException(ResourceNotFoundException ex) {
+	public ResponseEntity<ExceptionResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
 
 		ExceptionResponse exceptionResponse = exceptionResponseBuild(ex);
 
@@ -29,7 +44,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(InsufficientBalanceException.class)
-	public ResponseEntity<ExceptionResponse> handleInvalidParameterException(InsufficientBalanceException ex) {
+	public ResponseEntity<ExceptionResponse> handleInsufficientBalanceException(InsufficientBalanceException ex) {
 
 		ExceptionResponse exceptionResponse = exceptionResponseBuild(ex);
 
@@ -37,7 +52,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(NegativeAmountException.class)
-	public ResponseEntity<ExceptionResponse> handleInvalidParameterException(NegativeAmountException ex) {
+	public ResponseEntity<ExceptionResponse> handleNegativeAmountException(NegativeAmountException ex) {
 
 		ExceptionResponse exceptionResponse = exceptionResponseBuild(ex);
 
@@ -45,7 +60,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(BankProcessFailedException.class)
-	public ResponseEntity<ExceptionResponse> handleInvalidParameterException(BankProcessFailedException ex) {
+	public ResponseEntity<ExceptionResponse> handleBankProcessException(BankProcessFailedException ex) {
 
 		ExceptionResponse exceptionResponse = exceptionResponseBuild(ex);
 
@@ -53,7 +68,7 @@ public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler(UniqueConstraintViolationException.class)
-	public ResponseEntity<ExceptionResponse> handleInvalidParameterException(UniqueConstraintViolationException ex) {
+	public ResponseEntity<ExceptionResponse> handleUniqueConstraintException(UniqueConstraintViolationException ex) {
 
 		ExceptionResponse exceptionResponse = exceptionResponseBuild(ex);
 

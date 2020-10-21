@@ -31,6 +31,15 @@ public class TransferOperationService {
 	@Autowired
 	private OperationService operationService;
 	
+	/**
+	 * <p>Method used to process a transfer operation between registered accounts
+	 * and persist the related entities {@link Transfer} and {@link Operation}.</p>
+	 * @param transferOperationDto
+	 * @return TransferOperationResponse
+	 * @throws InsufficientBalanceException
+	 * @throws ResourceNotFoundException
+	 * @throws NegativeAmountException
+	 */
 	@Transactional(rollbackOn = Exception.class)
 	public TransferOperationResponse processTransferOperation (TransferOperationDTO transferOperationDto) throws InsufficientBalanceException, ResourceNotFoundException, NegativeAmountException {
 					

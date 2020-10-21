@@ -3,7 +3,13 @@ package com.paymybuddy.responseentity;
 import org.springframework.stereotype.Component;
 
 import com.paymybuddy.dto.TransferOperationDTO;
+import com.paymybuddy.service.TransferOperationService;
 
+/**
+ * <p>Detailed information message returned when a transfer operation has succeed.</p>
+ * @author newbie
+ *@see TransferOperationService
+ */
 @Component
 public class TransferOperationResponse {
 

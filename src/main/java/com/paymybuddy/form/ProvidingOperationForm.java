@@ -4,6 +4,14 @@ import javax.validation.constraints.Min;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>Test purpose class consisting in a simple form collecting {@link ProvidingOperationDTO} data 
+ * from front end in order to process a providing operation. 
+ * To be improved with a front end collaboration.</p>
+ * @author newbie
+ * @see ProvidingOperationService
+ *
+ */
 @Component
 public class ProvidingOperationForm {
 

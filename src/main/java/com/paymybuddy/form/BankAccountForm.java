@@ -2,6 +2,13 @@ package com.paymybuddy.form;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>Test purpose class consisting in a simple form collecting {@link BankAccount} data 
+ * from front end in order to be persisted. To be improved with a front end collaboration.</p>
+ * 
+ * @author newbie
+ *	@see BankAccountDto
+ */
 @Component
 public class BankAccountForm {
 	

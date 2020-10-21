@@ -34,6 +34,16 @@ public class ProvidingOperationService {
 	@Autowired
 	private BankAccountService bankAccountService;
 
+	/**
+	 * <p>Method used to process a providing operation either from account or bank account
+	 * and persist the related entities {@link Providing} and {@link Operation}.</p>
+	 * @param providingOperationDto
+	 * @return ProvidingOperationResponse
+	 * @throws InsufficientBalanceException
+	 * @throws BankProcessFailedException
+	 * @throws ResourceNotFoundException
+	 * @throws NegativeAmountException
+	 */
 	@Transactional(rollbackOn = Exception.class)
 	public ProvidingOperationResponse processProvidingOperation(ProvidingOperationDTO providingOperationDto) throws InsufficientBalanceException, BankProcessFailedException, ResourceNotFoundException, NegativeAmountException {
 

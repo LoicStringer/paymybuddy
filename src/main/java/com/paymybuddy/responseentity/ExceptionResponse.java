@@ -3,7 +3,13 @@ package com.paymybuddy.responseentity;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.paymybuddy.controller.ExceptionsHandler;
 
+/**
+ * Building a custom detailed exception message.
+ * @author newbie
+ *@see ExceptionsHandler
+ */
 public class ExceptionResponse {
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")

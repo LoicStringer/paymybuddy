@@ -4,6 +4,13 @@ import javax.validation.constraints.Min;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>Test purpose class consisting in a simple form collecting {@link TransferOperationDTO} data 
+ * from front end in order to process a transfer operation. 
+ * To be improved with a front end collaboration.</p>
+ * @author newbie
+ *@see TransferOperationService
+ */
 @Component
 public class TransferOperationForm {
 	

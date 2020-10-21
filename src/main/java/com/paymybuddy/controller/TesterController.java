@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.paymybuddy.dto.BankAccountDTO;
@@ -27,7 +26,9 @@ import com.paymybuddy.exception.InsufficientBalanceException;
 import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.exception.UniqueConstraintViolationException;
+import com.paymybuddy.exception.WrongPasswordException;
 import com.paymybuddy.form.BankAccountForm;
+import com.paymybuddy.form.ConnectionForm;
 import com.paymybuddy.form.FriendshipForm;
 import com.paymybuddy.form.ProvidingOperationForm;
 import com.paymybuddy.form.TransferOperationForm;
@@ -41,6 +42,12 @@ import com.paymybuddy.service.TaxService;
 import com.paymybuddy.service.TransferOperationService;
 import com.paymybuddy.service.TransferService;
 
+/**
+ * <p>Testing purpose controller class. 
+ * Each methods corresponds to a project's required function. </>
+ * @author newbie
+ *
+ */
 @RestController
 public class TesterController {
 
@@ -66,8 +73,8 @@ public class TesterController {
 	private TransferService transferService;
 	
 	@GetMapping("/accounts")
-	public ResponseEntity<Account> getAccount(@RequestParam("id")Long id) throws ResourceNotFoundException{
-		return ResponseEntity.ok(accountService.getAccount(id));
+	public ResponseEntity<Account> connectToMyAccount(@RequestBody ConnectionForm connectionForm) throws ResourceNotFoundException, WrongPasswordException{
+		return ResponseEntity.ok(accountService.connectToMyAccount(connectionForm));
 	}
 
 	@GetMapping("/accounts/{id}/friendships")

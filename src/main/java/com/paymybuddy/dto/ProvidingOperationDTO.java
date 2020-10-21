@@ -2,6 +2,14 @@ package com.paymybuddy.dto;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * <p>This class is used to manipulate data (supplied by front end) required to process 
+ * a providing from/to a bank account and build both {@link Providing} entity 
+ * and {@link Operation} in order to persist them in database.</p> 
+ * @author newbie
+ *@see ProvidingOperationForm
+ *@see ProvidingOperationService
+ */
 @Component
 public class ProvidingOperationDTO {
 

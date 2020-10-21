@@ -9,13 +9,23 @@ import com.paymybuddy.exception.InsufficientBalanceException;
 import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.exception.UniqueConstraintViolationException;
+import com.paymybuddy.exception.WrongPasswordException;
+import com.paymybuddy.form.ConnectionForm;
 
+/**
+ * <p>Provides methods dealing with the {@link Account} entity and 
+ * the application functionalities involving its handling such as CRUD operations, 
+ * money operations or connections.</p>
+ * @author newbie
+ *
+ */
 @Service
 public class AccountService {
 	
 	@Autowired
 	private AccountDAO accountDao;
 	
+
 	public Account getAccount (long accountId) throws ResourceNotFoundException {
 		return accountDao.findById(accountId).orElseThrow(()-> new ResourceNotFoundException("Account not found."));
 	}
@@ -31,6 +41,17 @@ public class AccountService {
 	
 	public Account updateAccount(Account account) {
 		return accountDao.save(account);
+	}
+	
+	public Account connectToMyAccount (ConnectionForm connectionForm) throws ResourceNotFoundException, WrongPasswordException {
+	
+		Account myAccount = getAccountByEmail(connectionForm.getEmail());
+		
+		if(!myAccount.getAccountUserPassword().equals(connectionForm.getPassword())) {
+			throw new WrongPasswordException("Wrong password.");
+		}
+		
+		return myAccount;
 	}
 	
 	public void addMoneyToAccount(Account account, double amount) throws NegativeAmountException {

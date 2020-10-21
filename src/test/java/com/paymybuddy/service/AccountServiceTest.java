@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,6 +25,8 @@ import com.paymybuddy.exception.InsufficientBalanceException;
 import com.paymybuddy.exception.NegativeAmountException;
 import com.paymybuddy.exception.ResourceNotFoundException;
 import com.paymybuddy.exception.UniqueConstraintViolationException;
+import com.paymybuddy.exception.WrongPasswordException;
+import com.paymybuddy.form.ConnectionForm;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceTest {
@@ -34,15 +37,24 @@ class AccountServiceTest {
 	@Mock
 	private AccountDAO accountDao;
 
+	private static ConnectionForm connectionForm;
 	private Account account;
-
+	
+	@BeforeAll
+	static void setUp() {
+		connectionForm = new ConnectionForm();
+		connectionForm.setEmail("tonymontana@scarface.com");
+		connectionForm.setPassword("AlPacinoIsTheGOAT");
+	}
+	
 	@BeforeEach
-	void setUp() {
+	void setUpForTests() {
 
 		account = new Account();
 		account.setAccountId(1);
 		account.setAccountBalance(275.50);
 		account.setAccountUserEmail("tonymontana@scarface.com");
+		account.setAccountUserPassword("AlPacinoIsTheGOAT");
 	}
 
 	@Nested
@@ -82,6 +94,14 @@ class AccountServiceTest {
 			assertEquals(accountService.updateAccount(account), account);
 		}
 
+		@Test
+		void connectToMyAccountTest() throws ResourceNotFoundException, WrongPasswordException {
+			
+			when(accountDao.findByAccountUserEmailEquals(any(String.class))).thenReturn(Optional.of(account));
+			
+			assertEquals(accountService.connectToMyAccount(connectionForm),account);
+		}
+		
 		@Test
 		void addMoneyToAccountTest() throws NegativeAmountException {
 
@@ -144,6 +164,16 @@ class AccountServiceTest {
 			when(accountDao.findByAccountUserEmailEquals(any(String.class))).thenReturn(Optional.of(account));
 			
 			assertThrows(UniqueConstraintViolationException.class, ()-> accountService.createAccount(account));
+		}
+		
+		@Test
+		void expectedExceptionIsThrownWhenTryingToConnectAnAccountWithWrongPasswordTest() {
+			
+			connectionForm.setPassword("wrongPassword");
+			
+			when(accountDao.findByAccountUserEmailEquals(any(String.class))).thenReturn(Optional.of(account));
+			
+			assertThrows(WrongPasswordException.class, ()-> accountService.connectToMyAccount(connectionForm));
 		}
 	}
 
